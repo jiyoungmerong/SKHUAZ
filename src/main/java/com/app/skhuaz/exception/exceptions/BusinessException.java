@@ -1,5 +1,6 @@
-package com.app.skhuaz.exception;
+package com.app.skhuaz.exception.exceptions;
 
+import com.app.skhuaz.exception.ErrorCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
