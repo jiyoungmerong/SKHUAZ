@@ -50,6 +50,23 @@ public class User {
 
     private boolean isLogin; // 로그인 여부
 
+    @Builder
+    public User(String email, String password, String nickname, String semester,
+                boolean graduate, String major1, String major2, boolean department,
+                boolean major_minor, boolean double_major){
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.semester = semester;
+        this.graduate = graduate;
+        this.major1 = major1;
+        this.major2 = major2;
+        this.department = department;
+        this.major_minor = major_minor;
+        this.double_major = double_major;
+    }
+
+
     // fixme : 추후에 권한 추가 예정
 
 }
