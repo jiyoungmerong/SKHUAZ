@@ -11,6 +11,9 @@ public enum ErrorCode {
     EMAIL_CANNOT_BE_SENT(500, "이메일을 보낼 수 없습니다."),
     EMAIL_VERIFICATION_CODE_NOT_FOUND(400, "이메일 인증 코드가 존재하지 않습니다."),
 
+    // 닉네임
+    NICKNAME_ALREADY_REGISTERED(409, "이미 존재하는 닉네임입니다."),
+
     // 인증 - 로그인 시도
     MISMATCHED_SIGNIN_INFO(400, "잘못된 로그인 정보입니다."),
 
@@ -21,7 +24,10 @@ public enum ErrorCode {
     NOT_ACCESS_TOKEN_TYPE(401, "tokenType이 access token이 아닙니다."),
     REFRESH_TOKEN_EXPIRED(401, "해당 refresh token은 만료됐습니다."),
     REFRESH_TOKEN_NOT_FOUND(400, "해당 refresh token은 존재하지 않습니다."),
-    NOT_VALID_TOKEN(401, "유효하지 않은 토큰입니다.");
+    NOT_VALID_TOKEN(401, "유효하지 않은 토큰입니다."),
+
+    // 서버 에러
+    INTERNAL_SERVER_ERROR(500, "서버 문제 발생");
 
     private int statusCode;
     private String message;
