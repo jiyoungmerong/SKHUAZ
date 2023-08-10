@@ -1,6 +1,7 @@
 package com.app.skhuaz.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -19,7 +20,8 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String email; // 이메일
+    @NotNull(message = "이메일은 필수 입력값입니다.") // 수정된 부분
+    private String email;
 
     @NonNull
     private String password; // 비밀번호
