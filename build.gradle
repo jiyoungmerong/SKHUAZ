@@ -1,4 +1,4 @@
-plugins {
+정plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.1.2'
@@ -39,13 +39,14 @@ dependencies {
 
     // tools
     compileOnly 'org.projectlombok:lombok'
-    implementation 'javax.xml.bind:jaxb-api:2.1'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
 
 
     // other
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'javax.xml.bind:jaxb-api:2.1'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.0.0'
 
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
