@@ -17,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -68,4 +65,16 @@ public class UserController {
 
         return ResponseEntity.ok(tokenDto);
     }
+
+    @GetMapping("/checkDuplicate/{nickname}") // 닉네임 중복 확인
+    public RspsTemplate<String> checkDuplicateNickname(@PathVariable final String nickname) {
+        boolean isDuplicate = userService.checkDuplicateNickname(nickname);
+
+        HttpStatus status = userService.checkDuplicateNickname(nickname) ? HttpStatus.CONFLICT : HttpStatus.OK;
+        String message = isDuplicate ? "이미 사용 중인 닉네임입니다." : "사용 가능한 닉네임입니다.";
+
+        return new RspsTemplate<>(status, message);
+    }
+
+
 }
