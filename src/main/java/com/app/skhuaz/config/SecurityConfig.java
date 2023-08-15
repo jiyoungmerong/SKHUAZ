@@ -31,6 +31,9 @@ public class SecurityConfig {
                 .authorizeRequests(requests -> requests
                         .requestMatchers("/user/join").permitAll() // 회원가입은 인증하지 않은 모든 사용자 허용
                         .requestMatchers("/user/login").permitAll()
+                        .requestMatchers("/user/checkDuplicate/{nickname}").permitAll()
+                        .requestMatchers("/email/send").permitAll()
+                        .requestMatchers("/email/verify/code").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
