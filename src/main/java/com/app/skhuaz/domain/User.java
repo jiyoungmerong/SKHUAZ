@@ -1,5 +1,6 @@
 package com.app.skhuaz.domain;
 
+import com.app.skhuaz.request.UpdateUserInformationRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -30,7 +31,7 @@ public class User {
     private String nickname; // 닉네임
 
     @NonNull
-    private String semester; // 학기
+    private int semester; // 학기
 
     @NonNull
     private boolean graduate; // 졸업 여부
@@ -53,7 +54,7 @@ public class User {
     private boolean isLogin; // 로그인 여부
 
     @Builder
-    public User(String email, String password, String nickname, String semester,
+    public User(String email, String password, String nickname, int semester,
                 boolean graduate, String major1, String major2, boolean department,
                 boolean major_minor, boolean double_major){
         this.email = email;
@@ -68,7 +69,21 @@ public class User {
         this.double_major = double_major;
     }
 
+    @Builder
+    public User(UpdateUserInformationRequest request){ // 유저 정보 업데이트 메소드
+        this.nickname = request.getNickname();
+        this.semester = request.getSemester();
+        this.graduate = request.isGraduate();
+        this.major1 = request.getMajor1();
+        this.major2 = request.getMajor2();
+        this.department = request.isDepartment();
+        this.major_minor = request.isMajor_minor();
+        this.double_major = request.isDouble_major();
+    }
 
+    public String updatePassword(String password){ // 비밀번호 업데이트
+        this.password = password;
+        return password;
+    }
     // fixme : 추후에 권한 추가 예정
-
 }
