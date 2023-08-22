@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-
 @Slf4j
 @Component
 public class TokenManager {
@@ -24,6 +23,7 @@ public class TokenManager {
 
     @Value("${token.secret}")
     private String tokenSecret;
+
 
     public TokenDto createTokenDto(String email) {
         Date accessTokenExpireTime = createAccessTokenExpireTime();
@@ -41,11 +41,15 @@ public class TokenManager {
     }
 
     private Date createAccessTokenExpireTime() {
-        return new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpirationTime));
+        // return new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpirationTime));
+        long expirationMillis = Long.parseLong(accessTokenExpirationTime);
+        return new Date(System.currentTimeMillis() + expirationMillis);
     }
 
     private Date createRefreshTokenExpireTime() {
-        return new Date(System.currentTimeMillis() + Long.parseLong(refreshTokenExpirationTime));
+        // return new Date(System.currentTimeMillis() + Long.parseLong(refreshTokenExpirationTime));
+        long expirationMillis = Long.parseLong(refreshTokenExpirationTime);
+        return new Date(System.currentTimeMillis() + expirationMillis);
     }
 
     private String createAccessToken(String email, Date expirationTime) {
@@ -60,7 +64,7 @@ public class TokenManager {
                  *      DB에서 정보를 조회해 Role을 확인하거나 할 필요가 없음. 토큰만 뜯어도 정보가 있어서.
                  */
 //                .claim("role", role)                          // 유저 role.
-                .signWith(SignatureAlgorithm.HS512, tokenSecret)
+                .signWith(SignatureAlgorithm.HS512, tokenSecret.getBytes())
                 .setHeaderParam("typ", "JWT")
                 .compact();
         return accessToken;
@@ -72,7 +76,7 @@ public class TokenManager {
                 .setAudience(email)                                 // 토큰 대상자
                 .setIssuedAt(new Date())                            // 토큰 발급 시간
                 .setExpiration(expirationTime)                      // 토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS512, tokenSecret)
+                .signWith(SignatureAlgorithm.HS512, tokenSecret.getBytes())
                 .setHeaderParam("typ", "JWT")
                 .compact();
         return refreshToken;
@@ -93,7 +97,7 @@ public class TokenManager {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(tokenSecret).parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(tokenSecret.getBytes()).parseClaimsJws(token);
             return true;
         } catch (MalformedJwtException e) {
             log.info("잘못된 jwt token", e);
@@ -108,15 +112,15 @@ public class TokenManager {
     public Claims getTokenClaims(String token) {
         Claims claims;
         try {
-            claims = Jwts.parser().setSigningKey(tokenSecret)  //jwt 만들 때 사용했던 키
-                    .parseClaimsJws(token).getBody()
-            ;
+            claims = Jwts.parser().setSigningKey(tokenSecret.getBytes())  // 수정된 부분
+                    .parseClaimsJws(token).getBody();
         } catch (Exception e) {
             e.printStackTrace();
             throw new NotValidTokenException(ErrorCode.NOT_VALID_TOKEN);
         }
         return claims;
     }
+
 
     public boolean isTokenExpired(Date tokenExpiredTime) {
         Date now = new Date();
@@ -129,7 +133,7 @@ public class TokenManager {
     public String getTokenType(String token){
         String tokenType;
         try{
-            Claims claims = Jwts.parser().setSigningKey(tokenSecret)
+            Claims claims = Jwts.parser().setSigningKey(tokenSecret.getBytes())
                     .parseClaimsJws(token).getBody();
             tokenType = claims.getSubject();
         } catch (Exception e){
