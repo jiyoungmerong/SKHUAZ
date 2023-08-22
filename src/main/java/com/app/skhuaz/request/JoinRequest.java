@@ -6,13 +6,14 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class JoinRequest {
+
     private String email; // 이메일
 
     private String password; // 비밀번호
 
     private String nickname; // 닉네임
 
-    private String semester; // 학기
+    private int semester; // 학기
 
     private boolean graduate; // 졸업 여부
 

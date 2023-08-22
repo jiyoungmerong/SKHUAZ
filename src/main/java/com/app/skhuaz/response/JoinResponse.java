@@ -9,7 +9,7 @@ public class JoinResponse {
 
     private String nickname; // 닉네임
 
-    private String semester; // 학기
+    private int semester; // 학기
 
     private boolean graduate; // 졸업 여부
 
@@ -23,7 +23,7 @@ public class JoinResponse {
 
     private boolean double_major; // 복수전공 여부
 
-    public static JoinResponse of(String email, String nickname, String semester,
+    public static JoinResponse of(String email, String nickname, int semester,
                                   boolean graduate, String major1, String major2,
                                   boolean department, boolean major_minor, boolean double_major){
         return new JoinResponse(email, nickname, semester, graduate,
