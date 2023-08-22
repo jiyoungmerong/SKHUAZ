@@ -23,4 +23,10 @@ public class RspsTemplate<T> {
         this.statusCode = httpStatus.value();
         this.message = message;
     }
+
+    public RspsTemplate(HttpStatus httpStatus, T data, String message) {
+        this.statusCode = httpStatus.value();
+        this.data = data;
+        this.message = message;
+    }
 }
