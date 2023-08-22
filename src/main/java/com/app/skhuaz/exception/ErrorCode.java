@@ -15,7 +15,7 @@ public enum ErrorCode {
     NICKNAME_ALREADY_REGISTERED(409, "이미 존재하는 닉네임입니다."),
 
     // 인증 - 로그인 시도
-    MISMATCHED_SIGNIN_INFO(400, "잘못된 로그인 정보입니다."),
+    MISMATCHED_SIGNIN_INFO(400, "로그인 정보가 옳지 않습니다."),
     USER_CERTIFICATION_FAILED(401, "비밀번호가 옳지 않습니다."),
     USER_NOT_JOIN(401, "해당 이메일을 가진 유저가 존재하지 않습니다."),
 
