@@ -22,31 +22,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenManager tokenManager;
 
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // 토큰 정보 가져오기
+        // 토큰 유효성을 검사한다. 메서드 내부에서 예외상황시 바로 return으로 빠져나오고 다음 필터를 동작시킨다.
+        filter(request);
+
+        filterChain.doFilter(request, response);
+    }
+
+    private void filter(HttpServletRequest request){
         String token = resolveToken(request);
-
-        if (StringUtils.hasText(token) && tokenManager.validateToken(token)) { // 토큰이 존재하고 유효한 경우
-            Claims claims = tokenManager.getTokenClaims(token);
-
-            if (claims != null) {
-                String email = tokenManager.getMemberEmail(token);
-                String tokenType = tokenManager.getTokenType(token);
-
-
-                // 인증 정보 저장
-                Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, null);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-
-            // 만료된 경우
-            if (tokenManager.isTokenExpired(claims.getExpiration())) {
-                throw new NotValidTokenException(ErrorCode.NOT_VALID_TOKEN);
-            }
+        // 1. 토큰이 존재하고 유효한 경우에만 토큰 파싱
+        if (! StringUtils.hasText(token)) {
+            return;
         }
 
-        // 다음 필터로 전달
-        filterChain.doFilter(request, response);
+        // 2. 토큰 유효성(변조) 검사
+        if (! tokenManager.validateToken(token)) {
+            return;
+        }
+
+        Claims claims = tokenManager.getTokenClaims(token);
+        // 3. 토큰 만료 검사
+
+        if (tokenManager.isTokenExpired(claims.getExpiration())) {
+            return;
+        }
+
+        String email = claims.getAudience();
+        // 마지막으로 인증 정보로 Audience  저장
+        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -54,6 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        return null;
+        return "";
     }
 }
