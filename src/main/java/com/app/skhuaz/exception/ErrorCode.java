@@ -18,6 +18,7 @@ public enum ErrorCode {
     MISMATCHED_SIGNIN_INFO(400, "로그인 정보가 옳지 않습니다."),
     USER_CERTIFICATION_FAILED(401, "비밀번호가 옳지 않습니다."),
     USER_NOT_JOIN(401, "해당 이메일을 가진 유저가 존재하지 않습니다."),
+    STATUS_NOT_LOGIN(401, "로그인 되어있지 않습니다."),
 
     // 인증 - 토큰
     NOT_EXISTS_AUTHORIZATION(401, "Authorization Header가 빈 값입니다."),
