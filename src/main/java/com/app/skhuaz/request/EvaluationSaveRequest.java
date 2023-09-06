@@ -17,5 +17,7 @@ public class EvaluationSaveRequest {
     private int task; // 과제정도
     private int practice; // 실습정도
     private int presentation; // 발표 정도
+    private String title;
     private String review; // 총평
+    private String email;
 }
