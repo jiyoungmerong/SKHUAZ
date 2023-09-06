@@ -29,6 +29,12 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_FOUND(400, "해당 refresh token은 존재하지 않습니다."),
     NOT_VALID_TOKEN(401, "유효하지 않은 토큰입니다."),
 
+    // 권한
+    NOT_EXISTS_AUTHORITY(401, "권한이 없습니다."),
+
+    // 강의평
+    NOT_EXISTS_EVALUATION(500, "해당 강의평이 존재하지 않습니다."),
+
     // 서버 에러
     INTERNAL_SERVER_ERROR(500, "서버 문제 발생");
 
