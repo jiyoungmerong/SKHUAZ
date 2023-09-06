@@ -1,11 +1,13 @@
 package com.app.skhuaz.domain;
 
+import com.app.skhuaz.request.EvaluationSaveRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -26,25 +28,39 @@ public class Evaluation {
 
     private int presentation; // 발표 정도
 
+    private String title; // 제목
+
     private String review; // 총평
 
-    @ManyToOne
+    private String email;
+
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "lectureId")
     private Lecture lecture;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private User user;
-
     @Builder
-    public Evaluation(int teamPlay, int task, int practice, int presentation,
-                      String review, Lecture lecture, User user){
+    public Evaluation(int teamPlay, int task, int practice, int presentation, String title,
+                      String review, String email, Lecture lecture){
         this.teamPlay = teamPlay;
         this.task = task;
         this.practice = practice;
         this.presentation = presentation;
+        this.title = title;
         this.review = review;
+        this.email = email;
         this.lecture = lecture;
-        this.user = user;
+    }
+
+    public void update(EvaluationSaveRequest request){
+        this.teamPlay = request.getTeamPlay();
+        this.task = request.getTask();
+        this.practice = request.getPractice();
+        this.presentation = request.getPresentation();
+        this.title = request.getTitle();
+        this.review = request.getReview();
+    }
+
+    public void updateLecture(Lecture lecture) {
+        this.lecture = lecture;
     }
 }
