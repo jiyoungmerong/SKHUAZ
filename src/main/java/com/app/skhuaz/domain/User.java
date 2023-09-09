@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static lombok.AccessLevel.PROTECTED;
 
 /*
@@ -18,7 +21,7 @@ User 엔티티
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
 
     @Column(unique = true, nullable = false)
     @NotNull(message = "이메일은 필수 입력값입니다.") // 수정된 부분
@@ -53,6 +56,14 @@ public class User {
 
     private boolean isLogin; // 로그인 여부
 
+    public void login(boolean isLogin) { // 로그인
+        this.isLogin = true;
+    }
+
+    public void logout(boolean isLogin) { // 로그아웃
+        this.isLogin = false;
+    }
+
     @Builder
     public User(String email, String password, String nickname, int semester,
                 boolean graduate, String major1, String major2, boolean department,
@@ -69,8 +80,7 @@ public class User {
         this.double_major = double_major;
     }
 
-    @Builder
-    public User(UpdateUserInformationRequest request){ // 유저 정보 업데이트 메소드
+    public void updateUser(UpdateUserInformationRequest request){
         this.nickname = request.getNickname();
         this.semester = request.getSemester();
         this.graduate = request.isGraduate();
@@ -85,5 +95,6 @@ public class User {
         this.password = password;
         return password;
     }
+
     // fixme : 추후에 권한 추가 예정
 }
