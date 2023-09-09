@@ -21,11 +21,4 @@ public class UpdateUserInformationRequest {
     private boolean major_minor; // 주-부전공 여부
 
     private boolean double_major; // 복수전공 여부
-
-    public static UpdateUserInformationRequest of(String nickname, int semester, boolean graduate,
-                                                  String major1, String major2, boolean department,
-                                                  boolean major_minor, boolean double_major) {
-        return new UpdateUserInformationRequest(nickname, semester, graduate, major1, major2,
-                department, major_minor, double_major);
-    }
 }
