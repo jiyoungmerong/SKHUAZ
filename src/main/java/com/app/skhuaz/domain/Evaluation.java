@@ -34,7 +34,7 @@ public class Evaluation {
 
     private String email;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "lectureId")
     private Lecture lecture;
 
