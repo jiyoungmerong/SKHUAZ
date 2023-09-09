@@ -9,7 +9,7 @@ import com.app.skhuaz.repository.EvaluationRepository;
 import com.app.skhuaz.repository.UserRepository;
 import com.app.skhuaz.request.EvaluationSaveRequest;
 import com.app.skhuaz.response.EvaluationSaveResponse;
-import com.app.skhuaz.response.LectureRepository;
+import com.app.skhuaz.repository.LectureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
