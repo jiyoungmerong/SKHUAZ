@@ -28,9 +28,9 @@ public class Lecture {
 
     private String profName; // 교수님
 
-    private int semester; // 개설 학기
+    private String semester; // 개설 학기
 
-    @Builder Lecture(String deptName, String lecName, String profName, int semester){
+    @Builder Lecture(String deptName, String lecName, String profName, String semester){
         this.deptName = deptName;
         this.lecName = lecName;
         this.profName = profName;

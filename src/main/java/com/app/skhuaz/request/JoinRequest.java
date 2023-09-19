@@ -1,5 +1,6 @@
 package com.app.skhuaz.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -13,7 +14,7 @@ public class JoinRequest {
 
     private String nickname; // 닉네임
 
-    private int semester; // 학기
+    private String semester; // 학기
 
     private boolean graduate; // 졸업 여부
 
