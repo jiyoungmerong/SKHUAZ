@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -34,7 +33,7 @@ public class User {
     private String nickname; // 닉네임
 
     @NonNull
-    private int semester; // 학기
+    private String semester; // 학기
 
     @NonNull
     private boolean graduate; // 졸업 여부
@@ -54,18 +53,17 @@ public class User {
     @NonNull
     private boolean double_major; // 복수전공 여부
 
-    private boolean isLogin; // 로그인 여부
+    private String refreshToken;
 
-    public void login(boolean isLogin) { // 로그인
-        this.isLogin = true;
-    }
+    private LocalDateTime tokenExp;
 
-    public void logout(boolean isLogin) { // 로그아웃
-        this.isLogin = false;
+    public void logout(){
+        this.refreshToken = "";
+        this.tokenExp = LocalDateTime.now();
     }
 
     @Builder
-    public User(String email, String password, String nickname, int semester,
+    public User(String email, String password, String nickname, String semester,
                 boolean graduate, String major1, String major2, boolean department,
                 boolean major_minor, boolean double_major){
         this.email = email;
@@ -90,11 +88,8 @@ public class User {
         this.major_minor = request.isMajor_minor();
         this.double_major = request.isDouble_major();
     }
-
     public String updatePassword(String password){ // 비밀번호 업데이트
         this.password = password;
         return password;
     }
-
-    // fixme : 추후에 권한 추가 예정
 }
