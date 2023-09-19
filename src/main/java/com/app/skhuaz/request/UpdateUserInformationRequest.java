@@ -8,7 +8,7 @@ import lombok.*;
 public class UpdateUserInformationRequest {
     private String nickname;
 
-    private int semester;
+    private String semester;
 
     private boolean graduate; // 졸업 여부
 
