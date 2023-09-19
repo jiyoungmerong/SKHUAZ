@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
-import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -32,6 +32,8 @@ public class Evaluation {
 
     private String review; // 총평
 
+    private LocalDateTime createdAt; // 생성 날짜
+
     private String email;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -40,13 +42,14 @@ public class Evaluation {
 
     @Builder
     public Evaluation(int teamPlay, int task, int practice, int presentation, String title,
-                      String review, String email, Lecture lecture){
+                      String review, LocalDateTime createdAt, String email, Lecture lecture){
         this.teamPlay = teamPlay;
         this.task = task;
         this.practice = practice;
         this.presentation = presentation;
         this.title = title;
         this.review = review;
+        this.createdAt = createdAt;
         this.email = email;
         this.lecture = lecture;
     }

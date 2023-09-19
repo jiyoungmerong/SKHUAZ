@@ -1,16 +1,15 @@
 package com.app.skhuaz.controller;
 
+import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.domain.Evaluation;
 import com.app.skhuaz.repository.EvaluationRepository;
 import com.app.skhuaz.request.EvaluationSaveRequest;
+import com.app.skhuaz.request.JoinRequest;
 import com.app.skhuaz.response.EvaluationSaveResponse;
+import com.app.skhuaz.response.JoinResponse;
 import com.app.skhuaz.service.EvaluationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,53 +25,49 @@ public class EvaluationController {
     private final EvaluationRepository evaluationRepository;
 
     @PostMapping("/save") // 강의평 저장
-    public ResponseEntity<EvaluationSaveResponse> join(@RequestBody @Valid final EvaluationSaveRequest request, Principal principal) {
-        EvaluationSaveResponse response = evaluationService.createEvaluation(request, principal);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public RspsTemplate<EvaluationSaveResponse> join(@RequestBody @Valid final EvaluationSaveRequest request, Principal principal) {
+        return evaluationService.createEvaluation(request, principal.getName());
     }
 
     @GetMapping("/AllEvaluation") // 모든 강의평 불러오기 (페이지처리 후순위)
-    public ResponseEntity<Page<Evaluation>> getPosts(@PageableDefault(size = 10, sort = "evaluationId", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Evaluation> evaluationPage = evaluationRepository.findAll(pageable);
-        return ResponseEntity.ok(evaluationPage);
+    public RspsTemplate<List<Evaluation>> getAllEvaluation() {
+        return evaluationService.getPosts();
     }
 
-    // 내가 작성한 강의평 불러오기
-    @GetMapping("/my-evaluations")
-    public ResponseEntity<List<Evaluation>> getMyEvaluations(Principal principal) {
-
-        List<Evaluation> myEvaluations = evaluationRepository.findAllByEmail(principal.getName());
-
-        return ResponseEntity.status(HttpStatus.OK).body(myEvaluations);
-    }
-
-    // 해당 ID의 강의평 상세보기 // 해당 강의평 없을 때 오류 처리 해야함~
+    // 해당 ID의 강의평 상세보기
     @GetMapping("/content/{evaluationId}")
-    public ResponseEntity<Evaluation> getEvaluationById(@PathVariable Long evaluationId){
-        Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
-        return ResponseEntity.status(HttpStatus.OK).body(evaluation);
+    public RspsTemplate<Evaluation> getEvaluationById(@PathVariable Long evaluationId){
+        return evaluationService.getEvaluationById(evaluationId);
     }
 
     // 강의평 수정
     @PutMapping("/edit/{evaluationId}")
-    public ResponseEntity<EvaluationSaveResponse> updateEvaluation(
+    public RspsTemplate<EvaluationSaveResponse> updateEvaluation(
             @PathVariable Long evaluationId,
             @RequestBody @Valid  EvaluationSaveRequest evaluationRequest, Principal principal) {
 
-        EvaluationSaveResponse response = evaluationService.updateEvaluation(evaluationId, evaluationRequest, principal);
+        return evaluationService.updateEvaluation(evaluationId, evaluationRequest, principal.getName());
 
-        return ResponseEntity.ok(response);
     }
 
     // 강의평 삭제
     @DeleteMapping("/delete/{evaluationId}")
-    public ResponseEntity<String> deleteEvaluation(@PathVariable Long evaluationId, Principal principal) {
-        evaluationService.deleteEvaluation(evaluationId, principal);
-        return ResponseEntity.ok(evaluationId + "번 강의평이 성공적으로 삭제되었습니다.");
+    public RspsTemplate<Void> deleteEvaluation(@PathVariable Long evaluationId, Principal principal) {
+        evaluationService.deleteEvaluation(evaluationId, principal.getName());
+        return new RspsTemplate<>(HttpStatus.OK, evaluationId + "번 강의평이 성공적으로 삭제되었습니다.");
     }
+    // 내가 작성한 강의평 불러오기 => 모바일쪽에서 필터처리 기능 추가한다고 함
+//    @GetMapping("/my-evaluations")
+//    public ResponseEntity<List<Evaluation>> getMyEvaluations(Principal principal) {
+//
+//        List<Evaluation> myEvaluations = evaluationRepository.findAllByEmail(principal.getName());
+//        // 해당 강의평 존재하지 않을 때 처리
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(myEvaluations);
+//    }
 
 
-    // 전공별로 불러오기
+    // 전공별로 불러오기 => 모바일쪽에서 필터처리 기능 추가한다고 함
 
-    // 강의 이름으로 검색
+    // 강의 이름으로 검색 => 모바일쪽에서 필터처리 기능 추가한다고 함
 }

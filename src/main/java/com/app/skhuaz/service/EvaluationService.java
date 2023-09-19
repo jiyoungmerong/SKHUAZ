@@ -1,5 +1,6 @@
 package com.app.skhuaz.service;
 
+import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.domain.Evaluation;
 import com.app.skhuaz.domain.Lecture;
 import com.app.skhuaz.domain.User;
@@ -11,9 +12,13 @@ import com.app.skhuaz.request.EvaluationSaveRequest;
 import com.app.skhuaz.response.EvaluationSaveResponse;
 import com.app.skhuaz.repository.LectureRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.security.Principal;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -27,37 +32,33 @@ public class EvaluationService {
     private final UserRepository userRepository;
 
     @Transactional // 강의평 저장
-    public EvaluationSaveResponse createEvaluation(EvaluationSaveRequest request, Principal principal) {
+    public RspsTemplate<EvaluationSaveResponse> createEvaluation(EvaluationSaveRequest request, String email) {
 
-        User user = userRepository.findByEmail(principal.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
 
         Lecture lecture = lectureRepository.findByDeptNameAndLecNameAndProfNameAndSemester(
                         request.getDeptName(), request.getLecName(), request.getProfName(), request.getSemester())
-                .orElseThrow(() -> new RuntimeException("Lecture not found"));
-
-        // fixme 로그인 되어있지 않을 때 401 처리
-//        if(user.isLogin()==false){ // 로그인 되어 있지 않을 때
-//            throw new BusinessException(ErrorCode.STATUS_NOT_LOGIN);
-//        }
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXISTS_LECTURE));
 
         try {
             Evaluation evaluation = Evaluation.builder()
                     .lecture(lecture)
-                    .email(principal.getName())
+                    .email(email)
                     .teamPlay(request.getTeamPlay())
                     .task(request.getTask())
                     .practice(request.getPractice())
                     .presentation(request.getPresentation())
                     .title(request.getTitle())
                     .review(request.getReview())
+                    .createdAt(LocalDateTime.now())
                     .build();
 
             evaluationRepository.save(evaluation);
 
-            return EvaluationSaveResponse.of(lecture.getDeptName(), lecture.getLecName(), lecture.getProfName(), lecture.getSemester(),
+            return new RspsTemplate<>(HttpStatus.OK, "강의평이 성공적으로 저장되었습니다.", EvaluationSaveResponse.of(lecture.getDeptName(), lecture.getLecName(), lecture.getProfName(), lecture.getSemester(),
                     request.getTeamPlay(), request.getTask(), request.getPractice(), request.getPresentation(), request.getTitle(),
-                    request.getReview());
+                    request.getReview()));
         }
         catch (Exception e){
             throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
@@ -65,7 +66,7 @@ public class EvaluationService {
     }
 
     @Transactional // 강의평 업데이트
-    public EvaluationSaveResponse updateEvaluation(Long evaluationId, EvaluationSaveRequest request, Principal principal) {
+    public RspsTemplate<EvaluationSaveResponse> updateEvaluation(Long evaluationId, EvaluationSaveRequest request, String email) {
         // 평가 엔티티 조회
         Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
 
@@ -74,14 +75,14 @@ public class EvaluationService {
         }
 
         // 현재 사용자가 평가 작성자인지 확인
-        if (!Objects.equals(principal.getName(), evaluation.getEmail())) {
+        if (!Objects.equals(email, evaluation.getEmail())) {
             throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
         }
 
         // 강의 엔티티를 찾기 위해 강의 정보로 검색
         Lecture lecture = lectureRepository.findByDeptNameAndLecNameAndProfNameAndSemester(
                         request.getDeptName(), request.getLecName(), request.getProfName(), request.getSemester())
-                .orElseThrow(() -> new RuntimeException("Lecture not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXISTS_LECTURE));
 
         // Evaluation 엔티티 수정
         evaluation.update(request);
@@ -90,24 +91,23 @@ public class EvaluationService {
 
         evaluationRepository.save(evaluation);
 
-        return EvaluationSaveResponse.of(lecture.getDeptName(), lecture.getLecName(), lecture.getProfName(), lecture.getSemester(),
+        return new RspsTemplate<>(HttpStatus.OK, "id가 " + evaluationId + "인 강의평을 성공적으로 수정하였습니다.", EvaluationSaveResponse.of(lecture.getDeptName(), lecture.getLecName(), lecture.getProfName(), lecture.getSemester(),
                 request.getTeamPlay(), request.getTask(), request.getPractice(), request.getPresentation(), request.getTitle(),
-                request.getReview());
+                request.getReview()));
     }
 
     @Transactional
-    public void deleteEvaluation(Long evaluationId, Principal principal) { // 강의평 삭제
+    public void deleteEvaluation(Long evaluationId, String email) { // 강의평 삭제
+        Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
+
+        if (evaluation == null) { // 해당 강의평이 존재하지 않는다면
+            throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
+        }
+
+        if (!email.equals(evaluation.getEmail())) { // 해당 강의평을 작성한 사용자가 아니라면
+            throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
+        }
         try{
-            Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
-
-            if (evaluation == null) { // 해당 강의평이 존재하지 않는다면
-                throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
-            }
-
-            if (!principal.getName().equals(evaluation.getEmail())) { // 해당 강의평을 작성한 사용자가 아니라면
-                throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
-            }
-
             evaluationRepository.delete(evaluation);
         }
         catch (Exception e) { // 서버 오류
@@ -115,5 +115,33 @@ public class EvaluationService {
         }
     }
 
-    // 저장시 카테고리 학기 - 교수님 - 강의이름 필터 => lecture컨트롤러 생성
+    // 모든 강의평 불러오기
+    public RspsTemplate<List<Evaluation>> getPosts() {
+        List<Evaluation> evaluations = evaluationRepository.findAllByOrderByEvaluationIdDesc();
+        if (evaluations.isEmpty()) {
+            throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
+        }
+        return new RspsTemplate<>(HttpStatus.OK, "모든 강의평 불러오기에 성공했습니다.", evaluations);
+    }
+
+
+
+    public RspsTemplate<Evaluation> getEvaluationById(@PathVariable Long evaluationId){
+        Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
+        if(evaluation==null){
+            throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
+        }
+        return new RspsTemplate<>(HttpStatus.OK, "id가 " + evaluationId + "인 강의평을 성공적으로 불러왔습니다.", evaluation);
+    }
+
+
+//    public RspsTemplate<List<Evaluation>> getMyEvaluations(String email) {
+//
+//        List<Evaluation> myEvaluations = evaluationRepository.findAllByEmail(email);
+//        if(myEvaluations.isEmpty()){
+//            throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
+//        }
+//
+//        return new RspsTemplate<>(HttpStatus.OK, myEvaluations, "강의평 불러오기에 성공했습니다.");
+//    }
 }
