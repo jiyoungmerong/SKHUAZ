@@ -1,7 +1,5 @@
 package com.app.skhuaz.jwt.service;
 
-import com.app.skhuaz.exception.ErrorCode;
-import com.app.skhuaz.exception.exceptions.NotValidTokenException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
