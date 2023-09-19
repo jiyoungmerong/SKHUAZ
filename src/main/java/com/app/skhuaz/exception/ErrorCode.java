@@ -13,11 +13,12 @@ public enum ErrorCode {
 
     // 닉네임
     NICKNAME_ALREADY_REGISTERED(409, "이미 존재하는 닉네임입니다."),
+    NICKNAME_LENGTH_MAX(400, "닉네임은 10자 이내로 작성해야 합니다."),
 
     // 인증 - 로그인 시도
     MISMATCHED_SIGNIN_INFO(400, "로그인 정보가 옳지 않습니다."),
     USER_CERTIFICATION_FAILED(401, "비밀번호가 옳지 않습니다."),
-    USER_NOT_JOIN(401, "해당 이메일을 가진 유저가 존재하지 않습니다."),
+    USER_NOT_JOIN(401, "해당 유저가 존재하지 않습니다."),
     STATUS_NOT_LOGIN(401, "로그인 되어있지 않습니다."),
 
     // 인증 - 토큰
@@ -33,7 +34,13 @@ public enum ErrorCode {
     NOT_EXISTS_AUTHORITY(401, "권한이 없습니다."),
 
     // 강의평
-    NOT_EXISTS_EVALUATION(500, "해당 강의평이 존재하지 않습니다."),
+    NOT_EXISTS_EVALUATION(404, "강의평이 존재하지 않습니다."),
+
+    // 강의
+    NOT_EXISTS_LECTURE(404, "해당 강의가 존재하지 않습니다."),
+    NOT_EXISTS_PROFNAME(404, "해당 학기에 강의하시는 교수님이 존재하지 않습니다."),
+    NOT_EXISTS_LECNAME(404, "해당 학기와 교수님의 강의가 존재하지 않습니다."),
+
 
     // 서버 에러
     INTERNAL_SERVER_ERROR(500, "서버 문제 발생");
