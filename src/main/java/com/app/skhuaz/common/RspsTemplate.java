@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class RspsTemplate<T> {
     private int statusCode;
-    private T data;
 
     private String message;
+    private T data;
 
     public RspsTemplate(HttpStatus httpStatus, T data) {
         this.statusCode = httpStatus.value();
@@ -24,9 +24,9 @@ public class RspsTemplate<T> {
         this.message = message;
     }
 
-    public RspsTemplate(HttpStatus httpStatus, T data, String message) {
+    public RspsTemplate(HttpStatus httpStatus, String message, T data) {
         this.statusCode = httpStatus.value();
-        this.data = data;
         this.message = message;
+        this.data = data;
     }
 }
