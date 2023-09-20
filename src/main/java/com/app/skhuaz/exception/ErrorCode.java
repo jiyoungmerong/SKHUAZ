@@ -41,6 +41,9 @@ public enum ErrorCode {
     NOT_EXISTS_PROFNAME(404, "해당 학기에 강의하시는 교수님이 존재하지 않습니다."),
     NOT_EXISTS_LECNAME(404, "해당 학기와 교수님의 강의가 존재하지 않습니다."),
 
+    // 루트
+    NOT_EXISTS_ROUTE(404, "해당 루트글이 존재하지 않습니다."),
+
 
     // 서버 에러
     INTERNAL_SERVER_ERROR(500, "서버 문제 발생");

@@ -2,6 +2,7 @@ package com.app.skhuaz.service;
 
 import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.domain.PreLecture;
+import com.app.skhuaz.domain.Route;
 import com.app.skhuaz.repository.PreLectureRepository;
 import com.app.skhuaz.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +62,14 @@ public class PreLectureService {
     public RspsTemplate<List<PreLecture>> getPreLecturesByEmail(String email) {
         List<PreLecture> preLectureList = preLectureRepository.findByEmail(email);
         return new RspsTemplate<>(HttpStatus.OK, "사용자 선수과목 목록 조회에 성공하였습니다.", preLectureList);
+    }
+
+    public List<PreLecture> getPreLecturesByRoute(Route route) {
+        // Route 엔티티에서 preLectures 필드를 가져옵니다.
+        List<PreLecture> preLectures = route.getPreLectures();
+
+        // 가져온 preLectures 리스트를 반환합니다.
+        return preLectures;
     }
 
 

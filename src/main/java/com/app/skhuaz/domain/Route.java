@@ -6,11 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -32,16 +31,20 @@ public class Route {
 
     private String email;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JsonIgnore // preLectures 필드를 JSON 직렬화에서 제외
     private List<PreLecture> preLectures;
 
+    public void setPreLectures(List<PreLecture> preLectures) {
+        this.preLectures = preLectures;
+    }
+
     @Builder
-    public Route(String title, String recommendation, LocalDateTime createAt, String email, List<PreLecture> preLectures){
+    public Route(String title, String recommendation, LocalDateTime createAt, String email){
         this.title = title;
         this.recommendation = recommendation;
-        this.createAt = LocalDateTime.now();
+        this.createAt = createAt;
         this.email = email;
-        this.preLectures = preLectures;
+        // this.preLectures = preLectures;
     }
 }

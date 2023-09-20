@@ -143,16 +143,4 @@ public class TokenManager {
         return tokenType;
     }
 
-//    public String getRole(String token) {
-//        Claims claims;
-//        try {
-//            claims = Jwts.parser().setSigningKey(tokenSecret)
-//                    .parseClaimsJws(token).getBody();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new NotValidTokenException(ErrorCode.NOT_VALID_TOKEN);
-//        }
-//
-//        return (String) claims.get("role");
-//    }
 }

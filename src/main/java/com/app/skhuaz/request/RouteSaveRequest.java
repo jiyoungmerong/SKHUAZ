@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -13,5 +15,6 @@ public class RouteSaveRequest {
 
     private String recommendation; // 내용
 
-    private Long preLectureId;
+    private List<Long> preLectureList; // 선수과목(PreLecture)의 ID 리스트
+
 }

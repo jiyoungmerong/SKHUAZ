@@ -7,6 +7,4 @@ import java.util.List;
 
 public interface PreLectureRepository extends JpaRepository<PreLecture, Long> {
     List<PreLecture> findByEmail(String email);
-
-
 }
