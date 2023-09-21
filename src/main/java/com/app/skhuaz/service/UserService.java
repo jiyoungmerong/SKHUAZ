@@ -13,8 +13,6 @@ import com.app.skhuaz.util.EntityUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +29,19 @@ public class UserService {
 
     private final TokenManager tokenManager;
 
+    private final EmailVerificationService emailVerificationService;
+
     @Transactional // 회원가입
     public RspsTemplate<JoinResponse> create(@Valid JoinRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        boolean isEmailVerified = emailVerificationService.isEmailVerified(request.getEmail());
+        if(!isEmailVerified){ // 이메일 인증 하지 않았을 때
+            throw new BusinessException(ErrorCode.NOT_EMAIL_VERIFY);
+        } else if (userRepository.findByEmail(request.getEmail()).isPresent()) { // 이미 존재하는 이메일일 때
             throw new BusinessException(ErrorCode.EMAIL_ALREADY_REGISTERED);
-        } else if (userRepository.findByNickname(request.getNickname()).isPresent())
-            throw new BusinessException(ErrorCode.NICKNAME_ALREADY_REGISTERED);
-        else if(request.getNickname().length()>10){
+        }
+        else if (userRepository.findByNickname(request.getNickname()).isPresent()) // 이미 존재하는 닉네임일 때
+            throw new BusinessException(ErrorCode.NICKNAME_ALREADY_CHECK);
+        else if(request.getNickname().length()>10){ // 닉네임 길이가 10이 넘을 때
             throw new BusinessException(ErrorCode.NICKNAME_LENGTH_MAX);
         }
 
@@ -76,7 +80,7 @@ public class UserService {
         return tokenManager.createTokenDto(email);
     }
 
-    public RspsTemplate checkDuplicateNickname(String nickname) { // 닉네임 중복 확인
+    public RspsTemplate<String> checkDuplicateNickname(String nickname) { // 닉네임 중복 확인
         boolean checkNickname = userRepository.findByNickname(nickname).isPresent();
         if (checkNickname) { // 중복일 때
             throw new BusinessException(ErrorCode.NICKNAME_ALREADY_REGISTERED);
@@ -86,32 +90,33 @@ public class UserService {
     }
 
     @Transactional
-    public RspsTemplate<String> updateUserInformation(UpdateUserInformationRequest request, String email) { // 유저 정보 업데이트
+    public RspsTemplate<UpdateUserInformationRequest> updateUserInformation(UpdateUserInformationRequest request, String email) { // 유저 정보 업데이트
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
 
         try {
             user.updateUser(request);
-            return new RspsTemplate<>(HttpStatus.OK, "변경 성공");
+            return new RspsTemplate<>(HttpStatus.OK, "변경 성공", request);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @Transactional // 비밀번호 수정
-    public void changePassword(ChangePasswordRequest request, String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//    @Transactional // 비밀번호 수정
+//    public RspsTemplate<Void> changePassword(ChangePasswordRequest request, String email) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new UsernameNotFoundException("유저못찾음"));
+//
+//        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+//            throw new BadCredentialsException("비밀번호 틀림요");
+//        }
+//
+//        user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+//        userRepository.save(user);
+//        return new RspsTemplate<>(HttpStatus.OK, "변경 성공");
+//    }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid current password");
-        }
-
-        user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(user);
-    }
-
-    public RspsTemplate checkUser(LoginRequest request, String email) { // 유저 확인
+    public RspsTemplate<Void> checkUser(LoginRequest request, String email) { // 유저 확인
         Optional<User> creator = userRepository.findByEmail(email); // 이메일에 해당하는 유저 가져오기
         if (creator.isEmpty() || !email.equals(request.getEmail())) {
             throw new BusinessException(ErrorCode.USER_NOT_JOIN);
@@ -120,21 +125,6 @@ public class UserService {
         }
         return new RspsTemplate<>(HttpStatus.OK, "인증 성공");
     }
-
-//    @Transactional
-//    public RspsTemplate<String> changePassword(ChangePasswordRequest request, String email) { // 비밀번호 수정
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
-//
-//        if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-//            user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
-//            userRepository.save(user);
-//
-//            return new RspsTemplate<>(HttpStatus.OK, "비밀번호를 성공적으로 변경하였습니다.");
-//        } else {
-//            throw new BusinessException(ErrorCode.USER_CERTIFICATION_FAILED);
-//        }
-//    }
 
     @Transactional
     public void logout(String email) { // 로그아웃
