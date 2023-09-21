@@ -1,11 +1,13 @@
 package com.app.skhuaz.exception.exceptions;
 
+import com.app.skhuaz.exception.ErrorCode;
 import com.app.skhuaz.exception.dto.ErrorResponseDto;
 import com.app.skhuaz.util.LoggingUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
@@ -25,71 +29,85 @@ public class GlobalExceptionHandler {
      * HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못할경우 발생
      * 주로 @RequestBody, @RequestPart 어노테이션에서 발생
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
-        printLog(e, request);
-
-        StringBuilder sb = new StringBuilder();
-        BindingResult bindingResult = e.getBindingResult();
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        for (FieldError fieldError : fieldErrors) {
-            sb.append(fieldError.getDefaultMessage()).append(", ");
-        }
-        return createErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, sb.toString());
-    }
-
-    /**
-     * @ModelAttribute 으로 binding error 발생시 BindException 발생한다.
-     */
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorResponseDto> handleBindException(BindException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponseDto<Map<String, String>>> handleBindException(BindException e, HttpServletRequest request) {
         printLog(e, request);
 
-        StringBuilder sb = new StringBuilder();
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
+
+        StringBuilder sb = new StringBuilder();
+        Map<String, String> errorInfoMap = new HashMap<>();
         for (FieldError fieldError : fieldErrors) {
-            sb.append(fieldError.getDefaultMessage()).append(" ");
+            String errorMsg = sb
+                    .append(fieldError.getDefaultMessage())
+                    .append(". 요청받은 값: ")
+                    .append(fieldError.getRejectedValue())
+                    .toString();
+
+            errorInfoMap.put(fieldError.getField(), errorMsg);
+
+            sb.setLength(0);
         }
 
-        return createErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, sb.toString());
+        return createErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, errorInfoMap);
     }
-    /** @RequestParam 파라미터 없을 때*/
+
+    /** @RequestParam 파라미터 누락*/
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponseDto> handleMissingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponseDto<String>> handleMissingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest request) {
+        printLog(e, request);
+        String message = "파라미터 '" + e.getParameterName() + "'이 누락되었습니다.";
+        return createErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, message);
+    }
+
+    // BusinessException 을 상속한 다른 Custom Exception 에도 적용된다.
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<ErrorResponseDto<String>> handleBusinessException(IllegalArgumentException e, HttpServletRequest request){
         printLog(e, request);
         return createErrorResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     // BusinessException 을 상속한 다른 Custom Exception 에도 적용된다.
     @ExceptionHandler({BusinessException.class})
-    public ResponseEntity<ErrorResponseDto> handleBusinessException(BusinessException e, HttpServletRequest request){
+    public ResponseEntity<ErrorResponseDto<String>> handleBusinessException(BusinessException e, HttpServletRequest request){
         printLog(e, request);
         return createErrorResponse(e.getStatusCode(), e.getHttpStatus(), e.getMessage());
     }
 
     // 비즈니스 로직이 아닌 애플리케이션 서비스 로직상 예외
     @ExceptionHandler({AppServiceException.class})
-    public ResponseEntity<ErrorResponseDto> handleAppServiceException(AppServiceException e, HttpServletRequest request){
+    public ResponseEntity<ErrorResponseDto<String>> handleAppServiceException(AppServiceException e, HttpServletRequest request){
         printLog(e, request);
         return createErrorResponse(e.getStatusCode(), e.getHttpStatus(), e.getMessage());
     }
 
     // 예상하지 못한 예외 발생 시, 예외 로그 전체를 서버에 남기고, 로그 자체를 모두 클라이언트에 전송한다.
     // TODO 실제 서비스 시  전체 로그 클라이언트에 전송하지 않는다.
-    //  즉 CreateErrorResponseDto 에서 stackTrace 를 빼고 getMessage 정도만 보낸다.
+    //  즉 CreateErrorResponseDto 에서 stackTrace 를 빼고 '알 수 없는 에러' 를 반환한다.
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDto> handleException(Exception e, HttpServletRequest request){
+    public ResponseEntity<ErrorResponseDto<String>> handleException(Exception e, HttpServletRequest request){
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         log.error("예외처리 범위 외의 오류 발생. " + httpStatus.toString()); // enum.name() enum.toString() 차이 기억하자. name은 단순 문자열변환, toString은 오버라이딩된 메서드 호출
         printLog(e, request);
         e.printStackTrace(); // 콘솔에 StackTrace 남기기
-        String stackTrace = LoggingUtil.stackTraceToString(e); // 클라 반환용 StackTrace 생성
+        String stackTrace = LoggingUtil.stackTraceToString(e);// 클라 반환용 StackTrace 생성
 
         return createErrorResponse(httpStatus.value(), httpStatus, e.getMessage() +", " + stackTrace);
     }
 
-    private ResponseEntity<ErrorResponseDto> createErrorResponse(int statusCode, HttpStatus httpStatus, String errorMessage) {
-        ErrorResponseDto errDto = new ErrorResponseDto(statusCode, httpStatus, errorMessage);
+    private <T> ResponseEntity<ErrorResponseDto<T>> createErrorResponse(int statusCode, HttpStatus httpStatus, T errorMessage) {
+        ErrorResponseDto<T> errDto = new ErrorResponseDto<>(statusCode, httpStatus, errorMessage);
+        return ResponseEntity.status(httpStatus).body(errDto);
+    }
+
+    private ResponseEntity<ErrorResponseDto<String>> createErrorResponse(ErrorCode errorCode) {
+        int statusCode = errorCode.getStatusCode();
+        HttpStatus httpStatus = HttpStatus.valueOf(statusCode);
+
+        ErrorResponseDto<String> errDto = new ErrorResponseDto<>(
+                statusCode
+                , httpStatus
+                , errorCode.getMessage());
         return ResponseEntity.status(httpStatus).body(errDto);
     }
 

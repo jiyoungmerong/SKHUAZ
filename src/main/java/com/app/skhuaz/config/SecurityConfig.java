@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @Configuration
 public class SecurityConfig {
 
@@ -28,7 +28,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .authorizeRequests(requests -> requests
+                .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/user/join").permitAll() // 인증하지 않은 모든 사용자 허용
                         .requestMatchers("/user/login").permitAll()
                         .requestMatchers("/user/checkDuplicate/{nickname}").permitAll()

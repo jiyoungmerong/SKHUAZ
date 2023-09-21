@@ -10,9 +10,11 @@ public enum ErrorCode {
     EMAIL_ALREADY_REGISTERED(409, "이미 가입된 이메일입니다."),
     EMAIL_CANNOT_BE_SENT(500, "이메일을 보낼 수 없습니다."),
     EMAIL_VERIFICATION_CODE_NOT_FOUND(400, "이메일 인증 코드가 존재하지 않습니다."),
+    NOT_EMAIL_VERIFY(401, "이메일 인증을 진행하지 않았습니다."),
 
     // 닉네임
-    NICKNAME_ALREADY_REGISTERED(409, "이미 존재하는 닉네임입니다."),
+    NICKNAME_ALREADY_CHECK(401, "닉네임 중복 확인을 진행해주세요."),
+    NICKNAME_ALREADY_REGISTERED(409, "중복된 닉네임입니다."),
     NICKNAME_LENGTH_MAX(400, "닉네임은 10자 이내로 작성해야 합니다."),
 
     // 인증 - 로그인 시도

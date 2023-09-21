@@ -97,7 +97,9 @@ public class TokenManager {
 
     public boolean validateToken(String token) {
         try {
+            System.out.println("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
             Jws<Claims> claims = Jwts.parser().setSigningKey(tokenSecret.getBytes()).parseClaimsJws(token);
+            System.out.println("ddddddddddddddddddddddddddddddddddddddddddddddddd");
             return true;
         } catch (MalformedJwtException e) {
             log.info("잘못된 jwt token", e);
