@@ -1,5 +1,6 @@
 package com.app.skhuaz.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,13 +10,20 @@ import java.util.Properties;
 
 @Configuration
 public class EmailConfig {
+
+    @Value("${spring.mail.username}")
+    private String username;
+
+    @Value("${spring.mail.password}")
+    private String password;
+
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setHost("smtp.naver.com"); // smtp 서버 주소
         javaMailSender.setPort(465); // 메일 인증 서버 포트
-        javaMailSender.setUsername("gjwldud0719@naver.com"); // 아이디
-        javaMailSender.setPassword("jiyoung0343!"); // 비밀번호
+        javaMailSender.setUsername(username); // 아이디
+        javaMailSender.setPassword(password); // 비밀번호
         javaMailSender.setDefaultEncoding("utf-8");
         javaMailSender.setJavaMailProperties(getMailProperties()); // 메일 인증서버 정보 가져오기
 

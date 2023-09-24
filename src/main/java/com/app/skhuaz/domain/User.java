@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
-
 import static lombok.AccessLevel.PROTECTED;
 
 /*
@@ -87,9 +86,5 @@ public class User {
         this.department = request.isDepartment();
         this.major_minor = request.isMajor_minor();
         this.double_major = request.isDouble_major();
-    }
-    public String updatePassword(String password){ // 비밀번호 업데이트
-        this.password = password;
-        return password;
     }
 }

@@ -4,7 +4,6 @@ import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.exception.ErrorCode;
 import com.app.skhuaz.exception.exceptions.BusinessException;
 import com.app.skhuaz.request.EmailRequest;
-import com.app.skhuaz.response.JoinResponse;
 import com.app.skhuaz.service.EmailService;
 import com.app.skhuaz.service.EmailVerificationService;
 import lombok.RequiredArgsConstructor;

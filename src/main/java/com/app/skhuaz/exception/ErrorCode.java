@@ -46,7 +46,6 @@ public enum ErrorCode {
     // 루트
     NOT_EXISTS_ROUTE(404, "해당 루트글이 존재하지 않습니다."),
 
-
     // 서버 에러
     INTERNAL_SERVER_ERROR(500, "서버 문제 발생");
 

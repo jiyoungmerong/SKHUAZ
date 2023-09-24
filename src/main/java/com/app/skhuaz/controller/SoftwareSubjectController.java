@@ -19,6 +19,4 @@ public class SoftwareSubjectController {
     public RspsTemplate<List<SoftwareSubject>> getAvailableSubjectsBySemester(@RequestBody LectureFilterRequest request) {
         return softwareSubjectService.getSubjectsBySemester(request.getSemester());
     }
-
-
 }

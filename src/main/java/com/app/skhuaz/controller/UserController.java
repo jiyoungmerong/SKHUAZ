@@ -2,7 +2,6 @@ package com.app.skhuaz.controller;
 
 import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.jwt.dto.TokenDto;
-import com.app.skhuaz.request.ChangePasswordRequest;
 import com.app.skhuaz.request.JoinRequest;
 import com.app.skhuaz.request.LoginRequest;
 import com.app.skhuaz.request.UpdateUserInformationRequest;
@@ -45,21 +44,6 @@ public class UserController {
     public RspsTemplate<Void> checkLogin(@RequestBody LoginRequest request, Principal principal) {
         return userService.checkUser(request, principal.getName());
     }
-
-//    @PutMapping("/change-password") // 비밀번호 수정
-//    public ResponseEntity<String> updatePassword(@RequestBody @Valid ChangePasswordRequest request, Principal principal) {
-//        try {
-//            userService.changePassword(request, principal.getName());
-//            return ResponseEntity.ok("비밀번호 업데이트 성공");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("실패: " + e.getMessage());
-//        }
-//    }
-
-//    @PostMapping("/change-password") // 비밀번호 수정
-//    public RspsTemplate<Void> changePassword(@RequestBody final ChangePasswordRequest request, Principal principal) {
-//        return userService.changePassword(request, principal.getName());
-//    }
 
     @DeleteMapping("/delete") // 회원 탈퇴
     public RspsTemplate<String> deleteUser(Principal principal) {

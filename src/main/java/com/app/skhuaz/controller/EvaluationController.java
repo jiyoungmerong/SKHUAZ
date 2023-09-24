@@ -4,14 +4,11 @@ import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.domain.Evaluation;
 import com.app.skhuaz.repository.EvaluationRepository;
 import com.app.skhuaz.request.EvaluationSaveRequest;
-import com.app.skhuaz.request.JoinRequest;
 import com.app.skhuaz.response.EvaluationSaveResponse;
-import com.app.skhuaz.response.JoinResponse;
 import com.app.skhuaz.service.EvaluationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
@@ -21,8 +18,6 @@ import java.util.List;
 @RequestMapping("/evaluation")
 public class EvaluationController {
     private final EvaluationService evaluationService;
-
-    private final EvaluationRepository evaluationRepository;
 
     @PostMapping("/save") // 강의평 저장
     public RspsTemplate<EvaluationSaveResponse> join(@RequestBody @Valid final EvaluationSaveRequest request, Principal principal) {
@@ -56,6 +51,7 @@ public class EvaluationController {
         evaluationService.deleteEvaluation(evaluationId, principal.getName());
         return new RspsTemplate<>(HttpStatus.OK, evaluationId + "번 강의평이 성공적으로 삭제되었습니다.");
     }
+
     // 내가 작성한 강의평 불러오기 => 모바일쪽에서 필터처리 기능 추가한다고 함
 //    @GetMapping("/my-evaluations")
 //    public ResponseEntity<List<Evaluation>> getMyEvaluations(Principal principal) {

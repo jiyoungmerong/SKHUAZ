@@ -30,5 +30,4 @@ public class PreLecture {
     public void addUser(String email){
         this.email = email;
     }
-
 }

@@ -6,8 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +34,11 @@ public class Route {
 
     private String email;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JsonIgnore // preLectures 필드를 JSON 직렬화에서 제외
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @Fetch(FetchMode.SUBSELECT)
+//    private List<PreLecture> preLectures;
+    @OneToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
     private List<PreLecture> preLectures;
 
     public void setPreLectures(List<PreLecture> preLectures) {
