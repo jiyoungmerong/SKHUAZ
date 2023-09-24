@@ -50,7 +50,7 @@ public class UserController {
         return userService.deleteUser(principal);
     }
 
-    @PostMapping("/change-information") // 정보 수정
+    @PostMapping("/information") // 정보 수정
     public RspsTemplate<UpdateUserInformationRequest> changeUserInfo(@RequestBody @Valid final UpdateUserInformationRequest request,
                                                           Principal principal){
         return userService.updateUserInformation(request, principal.getName());
