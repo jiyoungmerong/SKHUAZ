@@ -118,9 +118,6 @@ public class EvaluationService {
     // 모든 강의평 불러오기
     public RspsTemplate<List<Evaluation>> getPosts() {
         List<Evaluation> evaluations = evaluationRepository.findAllByOrderByEvaluationIdDesc();
-//        if (evaluations.isEmpty()) {
-//            throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
-//        }
         return new RspsTemplate<>(HttpStatus.OK, "모든 강의평 불러오기에 성공했습니다.", evaluations);
     }
 
@@ -135,13 +132,4 @@ public class EvaluationService {
     }
 
 
-//    public RspsTemplate<List<Evaluation>> getMyEvaluations(String email) {
-//
-//        List<Evaluation> myEvaluations = evaluationRepository.findAllByEmail(email);
-//        if(myEvaluations.isEmpty()){
-//            throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
-//        }
-//
-//        return new RspsTemplate<>(HttpStatus.OK, myEvaluations, "강의평 불러오기에 성공했습니다.");
-//    }
 }

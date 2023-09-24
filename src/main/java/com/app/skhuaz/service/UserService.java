@@ -33,11 +33,10 @@ public class UserService {
 
     @Transactional // 회원가입
     public RspsTemplate<JoinResponse> create(@Valid JoinRequest request) {
-//        boolean isEmailVerified = emailVerificationService.isEmailVerified(request.getEmail());
-//        if(!isEmailVerified){ // 이메일 인증 하지 않았을 때
-//            throw new BusinessException(ErrorCode.NOT_EMAIL_VERIFY);
-//        } else
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) { // 이미 존재하는 이메일일 때
+        boolean isEmailVerified = emailVerificationService.isEmailVerified(request.getEmail());
+        if(!isEmailVerified){ // 이메일 인증 하지 않았을 때
+            throw new BusinessException(ErrorCode.NOT_EMAIL_VERIFY);
+        } else if (userRepository.findByEmail(request.getEmail()).isPresent()) { // 이미 존재하는 이메일일 때
             throw new BusinessException(ErrorCode.EMAIL_ALREADY_REGISTERED);
         }
         else if (userRepository.findByNickname(request.getNickname()).isPresent()) // 이미 존재하는 닉네임일 때
@@ -102,20 +101,6 @@ public class UserService {
             throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
-
-//    @Transactional // 비밀번호 수정
-//    public RspsTemplate<Void> changePassword(ChangePasswordRequest request, String email) {
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new UsernameNotFoundException("유저못찾음"));
-//
-//        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-//            throw new BadCredentialsException("비밀번호 틀림요");
-//        }
-//
-//        user.updatePassword(passwordEncoder.encode(request.getNewPassword()));
-//        userRepository.save(user);
-//        return new RspsTemplate<>(HttpStatus.OK, "변경 성공");
-//    }
 
     public RspsTemplate<Void> checkUser(LoginRequest request, String email) { // 유저 확인
         Optional<User> creator = userRepository.findByEmail(email); // 이메일에 해당하는 유저 가져오기
