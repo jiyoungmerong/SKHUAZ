@@ -6,10 +6,13 @@ import com.app.skhuaz.exception.ErrorCode;
 import com.app.skhuaz.exception.exceptions.BusinessException;
 import com.app.skhuaz.repository.LectureRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,20 +31,34 @@ public class LectureService {
 
 
     public RspsTemplate<List<String>> getProfessorsBySemester(String semester) {
-        List<String> professors = lectureRepository.findProfessorsBySemester(semester);
-        if(professors.isEmpty()){
+        List<String> lectures = lectureRepository.findLecturesBySemester(semester);
+
+        if (lectures.isEmpty()) {
+            // 데이터가 없을 때 BusinessException을 던지도록 변경
             throw new BusinessException(ErrorCode.NOT_EXISTS_PROFNAME);
+        } else {
+            // 교수님 목록을 반환
+            return new RspsTemplate<>(HttpStatus.OK, semester + "의 교수님 목록 조회 성공!^^입니다", lectures);
         }
-        return new RspsTemplate<>(HttpStatus.OK, semester + "의 교수님 목록 조회 성공!^^입니다", professors);
     }
 
+
+
+//    public RspsTemplate<List<String>> getProfessorsBySemester(String semester) {
+//        List<String> professors = lectureRepository.findProfessorsBySemester(semester);
+//        if(professors.isEmpty()){
+//            throw new BusinessException(ErrorCode.NOT_EXISTS_PROFNAME);
+//        }
+//        return new RspsTemplate<>(HttpStatus.OK, semester + "의 교수님 목록 조회 성공!^^입니다", professors);
+//    }
+
     public RspsTemplate<List<String>> getLectureNameBySemesterAndProfessor(String semester, String professorName) {
-        List<String> LecNames = lectureRepository.findLectureNameBySemesterAndProfessor(semester, professorName);
-        if(LecNames.isEmpty()){
+        List<String> professor = lectureRepository.findProfessorNamesBySemesterAndLecName(semester, professorName);
+        if(professor.isEmpty()){
             throw new BusinessException(ErrorCode.NOT_EXISTS_LECNAME);
 
         }
-        return new RspsTemplate<>(HttpStatus.OK, semester + "의 " + professorName + "교수님 강의 목록 조회 성공!^^입니다", LecNames);
+        return new RspsTemplate<>(HttpStatus.OK, semester + "의 " + professorName + "교수님 강의 목록 조회 성공!^^입니다", professor);
     }
 
 }

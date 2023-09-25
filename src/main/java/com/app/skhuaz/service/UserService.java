@@ -94,6 +94,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
 
+        boolean checkNickname = userRepository.findByNickname(request.getNickname()).isPresent();
+        if (checkNickname) { // 닉네임 중복일 때
+            throw new BusinessException(ErrorCode.NICKNAME_ALREADY_REGISTERED);
+        }
+
         try {
             user.updateUser(request);
             return new RspsTemplate<>(HttpStatus.OK, "변경 성공", request);

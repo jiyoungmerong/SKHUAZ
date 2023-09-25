@@ -12,6 +12,6 @@ import static lombok.AccessLevel.PROTECTED;
 public class LectureFilterRequest {
     private String semester;
 
-    private String profName;
+    private String lecName;
 
 }

@@ -50,12 +50,7 @@ public class RouteService {
             preLectureOptional.ifPresent(preLecture -> preLectures.add(preLecture));
         }
 
-        route.setPreLectures(preLectures);
-        try{
-            routeRepository.save(route);
-        }catch (Exception e) { // 서버 오류
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        routeRepository.save(route);
 
         return new RspsTemplate<>(HttpStatus.OK, "루트 저장 성공!!", preLectures);
     }
