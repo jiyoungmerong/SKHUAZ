@@ -16,12 +16,12 @@ import java.util.Set;
 public class LectureController {
     private final LectureService lectureService;
 
-    @GetMapping("/semesters") // 학기 목록 조회
+    @PostMapping("/semesters") // 학기 목록 조회
     public RspsTemplate<Set<String>> getAllSemesters() {
         return lectureService.getAllSemesters();
     }
 
-    @GetMapping("/semesters/AllLecture")
+    @PostMapping("/semesters/AllLecture")
     public RspsTemplate<List<String>> getLecturesBySemester(@RequestBody @Valid LectureFilterRequest request) {
         return lectureService.getProfessorsBySemester(request.getSemester());
     }
@@ -36,7 +36,7 @@ public class LectureController {
 //        return lectureService.getLectureNameBySemesterAndProfessor(request.getSemester(), request.getProfName());
 //    }
 
-    @GetMapping("/semesters/AllProfessor")
+    @PostMapping("/semesters/AllProfessor")
     public RspsTemplate<List<String>> getProfessorBySemesterAndLectureName(
             @RequestBody @Valid LectureFilterRequest request) {
         return lectureService.getLectureNameBySemesterAndProfessor(request.getSemester(), request.getLecName());
