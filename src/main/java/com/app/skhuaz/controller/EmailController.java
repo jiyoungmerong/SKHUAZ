@@ -24,13 +24,9 @@ public class EmailController {
 
     @PostMapping("/send") // 인증번호 발송
     public ResponseEntity<RspsTemplate<String>> sendEmail(@RequestBody EmailRequest emailRequest) throws Exception {
-        try{
-            emailService.sendJoinMessage(emailRequest.getEmail()); // 이메일로 인증코드 전송
-            RspsTemplate<String> responseBody = new RspsTemplate<>(HttpStatus.OK, emailRequest.getEmail() + "로 이메일 인증 번호를 전송하였습니다.");
-            return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        emailService.sendJoinMessage(emailRequest.getEmail()); // 이메일로 인증코드 전송
+        RspsTemplate<String> responseBody = new RspsTemplate<>(HttpStatus.OK, emailRequest.getEmail() + "로 이메일 인증 번호를 전송하였습니다.");
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
     @PostMapping("/verify/code") // 이메일 인증코드 검증
