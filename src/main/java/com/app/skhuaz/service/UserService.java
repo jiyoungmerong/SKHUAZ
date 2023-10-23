@@ -27,11 +27,11 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final EmailVerificationService emailVerificationService;
 
     private final TokenManager tokenManager;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional // 회원가입
     public RspsTemplate<JoinResponse> create(@Valid JoinRequest request) {

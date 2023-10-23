@@ -22,6 +22,7 @@ spring:
     init:
       mode: always
 
+
   mail:
     host: smtp.naver.com
     port: 465
