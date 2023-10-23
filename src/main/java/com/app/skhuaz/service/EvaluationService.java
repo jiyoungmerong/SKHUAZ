@@ -44,7 +44,7 @@ public class EvaluationService {
         try {
             Evaluation evaluation = Evaluation.builder()
                     .lecture(lecture)
-                    .email(email)
+                    .nickname(user.getNickname())
                     .teamPlay(request.getTeamPlay())
                     .task(request.getTask())
                     .practice(request.getPractice())
@@ -70,12 +70,15 @@ public class EvaluationService {
         // 평가 엔티티 조회
         Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
+
         if (evaluation == null) {
             throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
         }
 
         // 현재 사용자가 평가 작성자인지 확인
-        if (!Objects.equals(email, evaluation.getEmail())) {
+        if (!Objects.equals(user.getNickname(), evaluation.getNickname())) {
             throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
         }
 
@@ -100,11 +103,14 @@ public class EvaluationService {
     public void deleteEvaluation(Long evaluationId, String email) { // 강의평 삭제
         Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
+
         if (evaluation == null) { // 해당 강의평이 존재하지 않는다면
             throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
         }
 
-        if (!email.equals(evaluation.getEmail()) && !email.equals("admin@admin.com")) { // 해당 강의평을 작성한 사용자가 아니라면
+        if (user.getNickname().equals(evaluation.getNickname()) && !Objects.equals(evaluation.getNickname(), "ww")) { // 해당 강의평을 작성한 사용자가 아니고 admin도 아니라면
             throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
         }
         try{
@@ -123,7 +129,7 @@ public class EvaluationService {
 
 
 
-    public RspsTemplate<Evaluation> getEvaluationById(@PathVariable Long evaluationId){
+    public RspsTemplate<Evaluation> getEvaluationById(@PathVariable Long evaluationId){ // 강의평 상세보기
         Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
         if(evaluation==null){
             throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);

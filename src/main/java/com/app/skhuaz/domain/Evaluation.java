@@ -34,15 +34,14 @@ public class Evaluation {
 
     private LocalDateTime createdAt; // 생성 날짜
 
-    private String email;
-
+    private String nickname;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "lectureId")
     private Lecture lecture;
 
     @Builder
     public Evaluation(int teamPlay, int task, int practice, int presentation, String title,
-                      String review, LocalDateTime createdAt, String email, Lecture lecture){
+                      String review, LocalDateTime createdAt, String nickname, Lecture lecture){
         this.teamPlay = teamPlay;
         this.task = task;
         this.practice = practice;
@@ -50,7 +49,7 @@ public class Evaluation {
         this.title = title;
         this.review = review;
         this.createdAt = createdAt;
-        this.email = email;
+        this.nickname = nickname;
         this.lecture = lecture;
     }
 
