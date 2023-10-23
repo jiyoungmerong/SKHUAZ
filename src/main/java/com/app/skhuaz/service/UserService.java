@@ -29,9 +29,9 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final TokenManager tokenManager;
-
     private final EmailVerificationService emailVerificationService;
+
+    private final TokenManager tokenManager;
 
     @Transactional // 회원가입
     public RspsTemplate<JoinResponse> create(@Valid JoinRequest request) {
