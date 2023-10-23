@@ -9,6 +9,7 @@ import com.app.skhuaz.jwt.service.TokenManager;
 import com.app.skhuaz.repository.UserRepository;
 import com.app.skhuaz.request.*;
 import com.app.skhuaz.response.JoinResponse;
+import com.app.skhuaz.response.UserMainInformationResponse;
 import com.app.skhuaz.util.EntityUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.security.Principal;
 import java.util.Optional;
 
@@ -33,10 +35,11 @@ public class UserService {
 
     @Transactional // 회원가입
     public RspsTemplate<JoinResponse> create(@Valid JoinRequest request) {
-        boolean isEmailVerified = emailVerificationService.isEmailVerified(request.getEmail());
-        if(!isEmailVerified){ // 이메일 인증 하지 않았을 때
-            throw new BusinessException(ErrorCode.NOT_EMAIL_VERIFY);
-        } else if (userRepository.findByEmail(request.getEmail()).isPresent()) { // 이미 존재하는 이메일일 때
+//        boolean isEmailVerified = emailVerificationService.isEmailVerified(request.getEmail());
+//        if(!isEmailVerified){ // 이메일 인증 하지 않았을 때
+//            throw new BusinessException(ErrorCode.NOT_EMAIL_VERIFY);
+//        } else
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) { // 이미 존재하는 이메일일 때
             throw new BusinessException(ErrorCode.EMAIL_ALREADY_REGISTERED);
         }
         else if (userRepository.findByNickname(request.getNickname()).isPresent()) // 이미 존재하는 닉네임일 때
@@ -133,5 +136,19 @@ public class UserService {
         } catch (Exception e){
             throw new BusinessException(ErrorCode.USER_CERTIFICATION_FAILED);
         }
+    }
+
+
+    public RspsTemplate<UserMainInformationResponse> getUserInfo(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        String nickname = userOptional.get().getNickname();
+        if(userOptional.get().isDepartment()){ // 1학년일 때
+            userOptional.get().updateMajor1(); // major1을 IT융합자율학부로 설정
+        }
+
+        return new RspsTemplate<>(HttpStatus.OK, "유저 정보 조회 성공!!", UserMainInformationResponse.of(nickname, userOptional.get().getMajor1(), userOptional.get().getMajor2()));
+
+
     }
 }

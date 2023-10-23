@@ -6,6 +6,7 @@ import com.app.skhuaz.request.JoinRequest;
 import com.app.skhuaz.request.LoginRequest;
 import com.app.skhuaz.request.UpdateUserInformationRequest;
 import com.app.skhuaz.response.JoinResponse;
+import com.app.skhuaz.response.UserMainInformationResponse;
 import com.app.skhuaz.service.UserService;
 import com.app.skhuaz.util.PrincipalUtil;
 import jakarta.validation.Valid;
@@ -64,5 +65,10 @@ public class UserController {
         return new RspsTemplate<>(HttpStatus.OK, "로그아웃 성공");
     }
 
-    // 비밀번호 찾기
+
+    @GetMapping("/userinfo") // 메인화면
+    public RspsTemplate<UserMainInformationResponse> getUserInfo(Principal principal) {
+        return userService.getUserInfo(principal.getName());
+    }
+
 }
