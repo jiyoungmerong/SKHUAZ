@@ -46,6 +46,12 @@ public enum ErrorCode {
     // 루트
     NOT_EXISTS_ROUTE(404, "해당 루트글이 존재하지 않습니다."),
 
+    PREREQUISITE_NOT_SATISFIED(400, "선수과목 %s이(가) 필요합니다."),
+
+    SUBJECT_NOT_FOUND(404, "선수과목을 찾을 수 없습니다: ID %s"),
+
+    MULTIPLE_ERRORS_OCCURRED(400, "다음의 오류들이 발생했습니다: %s"),
+
     // 서버 에러
     INTERNAL_SERVER_ERROR(500, "서버 문제 발생");
 
