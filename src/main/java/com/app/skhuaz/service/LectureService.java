@@ -38,19 +38,9 @@ public class LectureService {
             throw new BusinessException(ErrorCode.NOT_EXISTS_PROFNAME);
         } else {
             // 교수님 목록을 반환
-            return new RspsTemplate<>(HttpStatus.OK, semester + "의 교수님 목록 조회 성공!^^입니다", lectures);
+            return new RspsTemplate<>(HttpStatus.OK, semester + "의 강의 목록 조회 성공!^^입니다", lectures);
         }
     }
-
-
-
-//    public RspsTemplate<List<String>> getProfessorsBySemester(String semester) {
-//        List<String> professors = lectureRepository.findProfessorsBySemester(semester);
-//        if(professors.isEmpty()){
-//            throw new BusinessException(ErrorCode.NOT_EXISTS_PROFNAME);
-//        }
-//        return new RspsTemplate<>(HttpStatus.OK, semester + "의 교수님 목록 조회 성공!^^입니다", professors);
-//    }
 
     public RspsTemplate<List<String>> getLectureNameBySemesterAndProfessor(String semester, String professorName) {
         List<String> professor = lectureRepository.findProfessorNamesBySemesterAndLecName(semester, professorName);
@@ -58,7 +48,7 @@ public class LectureService {
             throw new BusinessException(ErrorCode.NOT_EXISTS_LECNAME);
 
         }
-        return new RspsTemplate<>(HttpStatus.OK, semester + "의 " + professorName + "교수님 강의 목록 조회 성공!^^입니다", professor);
+        return new RspsTemplate<>(HttpStatus.OK, semester + "의 " + professorName + " 강의의 교수님 조회 성공!^^입니다", professor);
     }
 
 }
