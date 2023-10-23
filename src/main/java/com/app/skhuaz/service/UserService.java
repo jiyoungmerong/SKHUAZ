@@ -35,11 +35,10 @@ public class UserService {
 
     @Transactional // 회원가입
     public RspsTemplate<JoinResponse> create(@Valid JoinRequest request) {
-//        boolean isEmailVerified = emailVerificationService.isEmailVerified(request.getEmail());
-//        if(!isEmailVerified){ // 이메일 인증 하지 않았을 때
-//            throw new BusinessException(ErrorCode.NOT_EMAIL_VERIFY);
-//        } else
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) { // 이미 존재하는 이메일일 때
+        boolean isEmailVerified = emailVerificationService.isEmailVerified(request.getEmail());
+        if(!isEmailVerified){ // 이메일 인증 하지 않았을 때
+            throw new BusinessException(ErrorCode.NOT_EMAIL_VERIFY);
+        } else if (userRepository.findByEmail(request.getEmail()).isPresent()) { // 이미 존재하는 이메일일 때
             throw new BusinessException(ErrorCode.EMAIL_ALREADY_REGISTERED);
         }
         else if (userRepository.findByNickname(request.getNickname()).isPresent()) // 이미 존재하는 닉네임일 때

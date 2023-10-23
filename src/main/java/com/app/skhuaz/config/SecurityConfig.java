@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/checkDuplicate/{nickname}").permitAll()
                         .requestMatchers("/email/send").permitAll()
                         .requestMatchers("/email/verify/code").permitAll()
+//                        .requestMatchers("/all-prerequisites").access("principal.username == 'admin'")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
