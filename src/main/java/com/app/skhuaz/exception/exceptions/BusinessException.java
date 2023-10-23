@@ -21,4 +21,10 @@ public class BusinessException extends RuntimeException {
         this.statusCode = httpStatus.value();
         this.httpStatus = httpStatus;
     }
+
+    public BusinessException(ErrorCode errorCode, Object... args) {
+        super(String.format(errorCode.getMessage(), args));
+        this.statusCode = errorCode.getStatusCode();
+        this.httpStatus = HttpStatus.valueOf(errorCode.getStatusCode());
+    }
 }
