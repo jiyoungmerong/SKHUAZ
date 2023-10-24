@@ -8,4 +8,11 @@ import java.util.List;
 public interface PrerequisitesRepository extends JpaRepository<Prerequisites, Long> {
 //    List<Prerequisites> findBySubject_SubjectId(Long subjectId);
 //    List<Prerequisites> findByPrerequisite_SubjectId(Long subjectId);
+
+    List<Prerequisites> findBySubjectId(Long subjectId);
+
+
+
+
+
 }

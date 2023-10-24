@@ -28,9 +28,4 @@ public class PreLectureController {
          return new RspsTemplate<>(HttpStatus.OK, "사용자 선수과목 목록 조회에 성공하였습니다.", preLectureService.getPreLecturesByEmail(principal.getName()));
     }
 
-    @GetMapping("/all-prerequisites") // admin 선수과목 리스트 조회
-    public RspsTemplate<List<PrerequisitesResponse>> getAllSubjectsNamesAndSemesters() {
-        return softwareSubjectService.getAllPrerequisitesWithDetails();
-    }
-
 }
