@@ -11,13 +11,14 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class AllRoutesResponse {
+    private Long routeId; // 루트 ID 추가
     private String title;
     private String recommendation;
     private LocalDateTime createAt;
     private String email;
     private List<PreLecture> preLectures;
 
-    public static AllRoutesResponse of(String title, String recommendation, LocalDateTime createAt, String email, List<PreLecture> preLectures){
-        return new AllRoutesResponse(title, recommendation, createAt, email, preLectures);
+    public static AllRoutesResponse of(Long routeId, String title, String recommendation, LocalDateTime createAt, String email, List<PreLecture> preLectures){
+        return new AllRoutesResponse(routeId, title, recommendation, createAt, email, preLectures);
     }
 }
