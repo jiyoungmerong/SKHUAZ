@@ -61,7 +61,7 @@ public class SoftwareSubjectService {
             if (uncompletedPrerequisite.isPresent()) {
                 SoftwareSubject prereqSubject = softwareSubjectRepository.findById(uncompletedPrerequisite.get().getPrerequisiteId())
                         .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXISTS_LECTURE));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RspsTemplate<>(HttpStatus.BAD_REQUEST, "선수과목 '" + prereqSubject.getSubjectName() + "'을(를) 수강해야 합니다.", prereqSubject.getSubjectName()));
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(new RspsTemplate<>(HttpStatus.ACCEPTED, "선수과목 '" + prereqSubject.getSubjectName() + "'을(를) 수강해야 합니다.", subject.get().getSubjectName()));
             }
 
             // 모든 선수과목의 checkYn이 true 면 수강 가능
