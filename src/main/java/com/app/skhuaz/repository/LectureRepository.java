@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface LectureRepository extends JpaRepository<Lecture, Long> {
     @Query("SELECT DISTINCT l FROM Lecture l WHERE l.lecName = :lecName AND l.profName = :profName AND l.semester = :semester")

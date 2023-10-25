@@ -26,16 +26,6 @@ public class LectureController {
         return lectureService.getProfessorsBySemester(request.getSemester());
     }
 
-//    @GetMapping("/check/profName") // 해당 학기의 교수님 이름 조회
-//    public RspsTemplate<List<String>> getProfessorsBySemester(@RequestBody @Valid LectureFilterRequest request) {
-//        return lectureService.getProfessorsBySemester(request.getSemester());
-//    }
-
-//    @GetMapping("/check/lecName") // 학기와 교수님 이름으로 강의이름목록 조회
-//    public RspsTemplate<List<String>> getLectureNameBySemesterAndProfessor(@RequestBody @Valid LectureFilterRequest request) {
-//        return lectureService.getLectureNameBySemesterAndProfessor(request.getSemester(), request.getProfName());
-//    }
-
     @PostMapping("/semesters/AllProfessor")
     public RspsTemplate<List<String>> getProfessorBySemesterAndLectureName(
             @RequestBody @Valid LectureFilterRequest request) {

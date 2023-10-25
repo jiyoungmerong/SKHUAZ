@@ -6,13 +6,10 @@ import com.app.skhuaz.exception.ErrorCode;
 import com.app.skhuaz.exception.exceptions.BusinessException;
 import com.app.skhuaz.repository.LectureRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

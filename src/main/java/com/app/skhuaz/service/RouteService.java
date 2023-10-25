@@ -9,15 +9,12 @@ import com.app.skhuaz.repository.PreLectureRepository;
 import com.app.skhuaz.repository.RouteRepository;
 import com.app.skhuaz.request.RouteSaveRequest;
 import com.app.skhuaz.response.AllRoutesResponse;
-import com.app.skhuaz.response.JoinResponse;
 import com.app.skhuaz.response.RouteDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.*;

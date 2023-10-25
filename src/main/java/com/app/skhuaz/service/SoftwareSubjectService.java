@@ -5,8 +5,6 @@ import com.app.skhuaz.domain.Prerequisites;
 import com.app.skhuaz.domain.SoftwareSubject;
 import com.app.skhuaz.exception.ErrorCode;
 import com.app.skhuaz.exception.exceptions.BusinessException;
-import com.app.skhuaz.exception.exceptions.PrerequisiteNotSatisfiedException;
-import com.app.skhuaz.repository.PreLectureRepository;
 import com.app.skhuaz.repository.PrerequisitesRepository;
 import com.app.skhuaz.repository.SoftwareSubjectRepository;
 import com.app.skhuaz.request.AddPreLectureRequest;

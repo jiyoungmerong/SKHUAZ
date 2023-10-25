@@ -30,4 +30,11 @@ public class PreLecture {
     public void addUser(String email){
         this.email = email;
     }
+
+    @Builder
+    public PreLecture(String semester, String email, List<String> lecNames){
+        this.semester = semester;
+        this.email = email;
+        this.lecNames = lecNames;
+    }
 }
