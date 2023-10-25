@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,33 +38,34 @@ public class EvaluationService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
 
-        Lecture lecture = lectureRepository.findByDeptNameAndLecNameAndProfNameAndSemester(
-                        request.getDeptName(), request.getLecName(), request.getProfName(), request.getSemester())
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXISTS_LECTURE));
+        Lecture lecture = lectureRepository.findByLecNameAndProfNameAndSemester(
+                        request.getLecName(), request.getProfName(), request.getSemester())
+                .orElse(null); // 조회 결과가 없을 경우 null 반환
 
-        try {
-            Evaluation evaluation = Evaluation.builder()
-                    .lecture(lecture)
-                    .nickname(user.getNickname())
-                    .teamPlay(request.getTeamPlay())
-                    .task(request.getTask())
-                    .practice(request.getPractice())
-                    .presentation(request.getPresentation())
-                    .title(request.getTitle())
-                    .review(request.getReview())
-                    .createdAt(LocalDateTime.now())
-                    .build();
-
-            evaluationRepository.save(evaluation);
-
-            return new RspsTemplate<>(HttpStatus.OK, "강의평이 성공적으로 저장되었습니다.", EvaluationSaveResponse.of(lecture.getDeptName(), lecture.getLecName(), lecture.getProfName(), lecture.getSemester(),
-                    request.getTeamPlay(), request.getTask(), request.getPractice(), request.getPresentation(), request.getTitle(),
-                    request.getReview()));
+        if (lecture == null) {
+            throw new BusinessException(ErrorCode.NOT_EXISTS_LECTURE);
         }
-        catch (Exception e){
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+
+        Evaluation evaluation = Evaluation.builder()
+                .lecture(lecture)
+                .nickname(user.getNickname())
+                .teamPlay(request.getTeamPlay())
+                .task(request.getTask())
+                .practice(request.getPractice())
+                .presentation(request.getPresentation())
+                .title(request.getTitle())
+                .review(request.getReview())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        evaluationRepository.save(evaluation);
+
+
+        return new RspsTemplate<>(HttpStatus.OK, "강의평이 성공적으로 저장되었습니다.", EvaluationSaveResponse.of(lecture.getDeptName(), lecture.getLecName(), lecture.getProfName(), lecture.getSemester(),
+                request.getTeamPlay(), request.getTask(), request.getPractice(), request.getPresentation(), request.getTitle(),
+                request.getReview()));
     }
+
 
     @Transactional // 강의평 업데이트
     public RspsTemplate<EvaluationSaveResponse> updateEvaluation(Long evaluationId, EvaluationSaveRequest request, String email) {
@@ -83,8 +85,8 @@ public class EvaluationService {
         }
 
         // 강의 엔티티를 찾기 위해 강의 정보로 검색
-        Lecture lecture = lectureRepository.findByDeptNameAndLecNameAndProfNameAndSemester(
-                        request.getDeptName(), request.getLecName(), request.getProfName(), request.getSemester())
+        Lecture lecture = lectureRepository.findByLecNameAndProfNameAndSemester(
+                        request.getLecName(), request.getProfName(), request.getSemester())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXISTS_LECTURE));
 
         // Evaluation 엔티티 수정
@@ -113,12 +115,8 @@ public class EvaluationService {
         if (user.getNickname().equals(evaluation.getNickname()) && !Objects.equals(evaluation.getNickname(), "ww")) { // 해당 강의평을 작성한 사용자가 아니고 admin도 아니라면
             throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
         }
-        try{
-            evaluationRepository.delete(evaluation);
-        }
-        catch (Exception e) { // 서버 오류
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+
+        evaluationRepository.delete(evaluation);
     }
 
     // 모든 강의평 불러오기
@@ -129,13 +127,12 @@ public class EvaluationService {
 
 
 
-    public RspsTemplate<Evaluation> getEvaluationById(@PathVariable Long evaluationId){ // 강의평 상세보기
+    public RspsTemplate<Evaluation> getEvaluationById(@PathVariable Long evaluationId) { // 강의평 상세보기
         Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
-        if(evaluation==null){
+        if (evaluation == null) {
             throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
         }
         return new RspsTemplate<>(HttpStatus.OK, "id가 " + evaluationId + "인 강의평을 성공적으로 불러왔습니다.", evaluation);
     }
-
 
 }
