@@ -49,5 +49,9 @@ public class SoftwareSubjectController {
 
     }
 
+    @GetMapping("/all-checkYn-change")
+    public RspsTemplate<String> disableAllCheckYn() {
+        return softwareSubjectService.disableAllCheckYn();
+    }
 
 }

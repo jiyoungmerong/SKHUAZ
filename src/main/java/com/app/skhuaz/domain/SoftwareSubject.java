@@ -27,8 +27,8 @@ public class SoftwareSubject { // 소프의 모든 강의 테이블
 
     private String semester;
 
-    public void updateCheckYn(){
-        this.checkYn = true;
+    public void updateCheckYn(boolean checkYn){
+        this.checkYn = checkYn;
     }
 
     @Builder

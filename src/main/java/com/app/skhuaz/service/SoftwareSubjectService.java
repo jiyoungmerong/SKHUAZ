@@ -144,10 +144,21 @@ public class SoftwareSubjectService {
 
             if (optionalSubject.isPresent()) {
                 SoftwareSubject subject = optionalSubject.get();
-                subject.updateCheckYn();
+                subject.updateCheckYn(true);
                 softwareSubjectRepository.save(subject);
             }
         }
+
+        return new RspsTemplate<>(HttpStatus.OK, "강의의 checkYn이 성공적으로 변경되었습니다.", null);
+    }
+
+    @Transactional
+    public RspsTemplate<String> disableAllCheckYn() {
+        List<SoftwareSubject> softwareSubjects = softwareSubjectRepository.findAll();
+        for (SoftwareSubject softwareSubject : softwareSubjects) {
+            softwareSubject.updateCheckYn(false);
+        }
+        softwareSubjectRepository.saveAll(softwareSubjects);
 
         return new RspsTemplate<>(HttpStatus.OK, "강의의 checkYn이 성공적으로 변경되었습니다.", null);
     }
