@@ -34,13 +34,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
 
     @Transactional
-    public RspsTemplate<List<PreLecture>> createRoute(RouteSaveRequest request, String email) {
-        Route route = Route.builder()
-                .title(request.getTitle())
-                .recommendation(request.getRecommendation())
-                .createAt(LocalDateTime.now())
-                .email(email)
-                .build();
+    public RspsTemplate<List<PreLecture>> createRoute(RouteSaveRequest request, String email) { // 루트 저장
 
         List<Long> preLectureIds = request.getPreLectureList();
 
@@ -50,12 +44,20 @@ public class RouteService {
             preLectureOptional.ifPresent(preLecture -> preLectures.add(preLecture));
         }
 
+        Route route = Route.builder()
+                .title(request.getTitle())
+                .recommendation(request.getRecommendation())
+                .createAt(LocalDateTime.now())
+                .email(email)
+                .preLectures(preLectures)  // preLectures 설정
+                .build();
+
         routeRepository.save(route);
 
         return new RspsTemplate<>(HttpStatus.OK, "루트 저장 성공!!", preLectures);
     }
 
-    public RspsTemplate<RouteDetailResponse> getRouteDetails(Long routeId) {
+    public RspsTemplate<RouteDetailResponse> getRouteDetails(Long routeId) { // 상세보기
         Route route = routeRepository.findById(routeId).orElse(null);
 
         if (route == null) {
@@ -67,7 +69,7 @@ public class RouteService {
     }
 
     @Transactional
-    public List<AllRoutesResponse> getAllRoutesWithPreLecturesInReverseOrder() {
+    public List<AllRoutesResponse> getAllRoutesWithPreLecturesInReverseOrder() { // 모든 루트 불러오기
         List<Route> routes = routeRepository.findAll();
         List<AllRoutesResponse> routeResponses = new ArrayList<>();
 
@@ -76,6 +78,7 @@ public class RouteService {
             Hibernate.initialize(preLectures); // lecNames 필드 초기화
 
             AllRoutesResponse routeResponse = AllRoutesResponse.of(
+                    (long) route.getRouteId(),
                     route.getTitle(),
                     route.getRecommendation(),
                     route.getCreateAt(),
@@ -99,7 +102,6 @@ public class RouteService {
             Route route = optionalRoute.get();
             routeRepository.delete(route);
         } else {
-            // 해당 ID의 루트평을 찾을 수 없는 경우 예외 처리 또는 에러 처리를 수행할 수 있습니다.
             throw new BusinessException(ErrorCode.NOT_EXISTS_ROUTE);
         }
     }
