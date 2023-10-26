@@ -34,6 +34,13 @@ public class RouteController {
         return new RspsTemplate<>(HttpStatus.OK, "모든 루트평을 성공적으로 불러왔습니다.", routesWithPreLectures);
     }
 
+    @GetMapping("/route/MyRoutes")
+    public RspsTemplate<List<AllRoutesResponse>> getMyRoutesWithPreLectures(Principal principal) {
+        List<AllRoutesResponse> myRoutesWithPreLectures = routeService.getRoutesByUserEmailWithPreLectures(principal.getName());
+        return new RspsTemplate<>(HttpStatus.OK, "내가 작성한 루트평을 성공적으로 불러왔습니다.", myRoutesWithPreLectures);
+    }
+
+
     @DeleteMapping("/route/delete/{routeId}")
     public RspsTemplate<Void> deleteRoute(@PathVariable Long routeId, Principal principal) {
         routeService.deleteRouteById(routeId, principal.getName());

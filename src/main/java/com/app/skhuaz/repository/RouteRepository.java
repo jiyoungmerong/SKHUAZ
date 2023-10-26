@@ -11,4 +11,7 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     @EntityGraph(attributePaths = "preLectures")
     List<Route> findAll();
 
+    List<Route> findByEmail(String email);
+
+
 }

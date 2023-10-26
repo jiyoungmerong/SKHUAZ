@@ -97,7 +97,35 @@ public class RouteService {
     }
 
     @Transactional
-    public void deleteRouteById(Long routeId, String email) {
+    public List<AllRoutesResponse> getRoutesByUserEmailWithPreLectures(String userEmail) { // 내가 작성한 루트평
+        List<Route> routes = routeRepository.findByEmail(userEmail);
+        List<AllRoutesResponse> routeResponses = new ArrayList<>();
+
+        for (Route route : routes) {
+            List<PreLecture> preLectures = preLectureService.getPreLecturesByEmail(route.getEmail());
+            Hibernate.initialize(preLectures); // lecNames 필드 초기화
+
+            AllRoutesResponse routeResponse = AllRoutesResponse.of(
+                    (long) route.getRouteId(),
+                    route.getTitle(),
+                    route.getRecommendation(),
+                    route.getCreateAt(),
+                    route.getEmail(),
+                    preLectures
+            );
+
+            routeResponses.add(routeResponse);
+        }
+
+        // 리스트를 역순으로 정렬
+        Collections.reverse(routeResponses);
+
+        return routeResponses;
+    }
+
+
+    @Transactional
+    public void deleteRouteById(Long routeId, String email) { // 루트평 삭제
         Optional<Route> optionalRoute = routeRepository.findById(routeId);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
