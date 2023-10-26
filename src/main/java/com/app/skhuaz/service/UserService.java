@@ -47,28 +47,24 @@ public class UserService {
             throw new BusinessException(ErrorCode.NICKNAME_LENGTH_MAX);
         }
 
-        try {
-            User user = User.builder()
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(request.getPassword())) // 암호화
-                    .nickname(request.getNickname())
-                    .semester(request.getSemester())
-                    .graduate(request.isGraduate())
-                    .major1(request.getMajor1())
-                    .major2(request.getMajor2())
-                    .department(request.isDepartment())
-                    .major_minor(request.isMajor_minor())
-                    .double_major(request.isDouble_major())
-                    .build();
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword())) // 암호화
+                .nickname(request.getNickname())
+                .semester(request.getSemester())
+                .graduate(request.isGraduate())
+                .major1(request.getMajor1())
+                .major2(request.getMajor2())
+                .department(request.isDepartment())
+                .major_minor(request.isMajor_minor())
+                .double_major(request.isDouble_major())
+                .build();
 
-            userRepository.save(user);
+        userRepository.save(user);
 
-            return new RspsTemplate<>(HttpStatus.OK, "회원가입이 성공적으로 완료되었습니다.", JoinResponse.of(request.getEmail(), request.getNickname(), request.getSemester(),
-                    request.isGraduate(), request.getMajor1(), request.getMajor2(),
-                    request.isDepartment(), request.isMajor_minor(), request.isDouble_major()));
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        return new RspsTemplate<>(HttpStatus.OK, "회원가입이 성공적으로 완료되었습니다.", JoinResponse.of(request.getEmail(), request.getNickname(), request.getSemester(),
+                request.isGraduate(), request.getMajor1(), request.getMajor2(),
+                request.isDepartment(), request.isMajor_minor(), request.isDouble_major()));
     }
 
     public TokenDto login(String email, String password) { // 로그인 로직
@@ -101,12 +97,8 @@ public class UserService {
             throw new BusinessException(ErrorCode.NICKNAME_ALREADY_REGISTERED);
         }
 
-        try {
-            user.updateUser(request);
-            return new RspsTemplate<>(HttpStatus.OK, "변경 성공", request);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        user.updateUser(request);
+        return new RspsTemplate<>(HttpStatus.OK, "변경 성공", request);
     }
 
     public RspsTemplate<Void> checkUser(LoginRequest request, String email) { // 유저 확인
@@ -146,7 +138,8 @@ public class UserService {
             userOptional.get().updateMajor1(); // major1을 IT융합자율학부로 설정
         }
 
-        return new RspsTemplate<>(HttpStatus.OK, "유저 정보 조회 성공!!", UserMainInformationResponse.of(nickname, userOptional.get().getMajor1(), userOptional.get().getMajor2()));
+        return new RspsTemplate<>(HttpStatus.OK, "유저 정보 조회 성공!!",
+                UserMainInformationResponse.of(nickname, userOptional.get().getMajor1(), userOptional.get().getMajor2()));
 
 
     }

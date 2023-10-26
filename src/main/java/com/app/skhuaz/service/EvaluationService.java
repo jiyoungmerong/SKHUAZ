@@ -104,19 +104,13 @@ public class EvaluationService {
     public void deleteEvaluation(Long evaluationId, String email) { // 강의평 삭제
         Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
-
         if (evaluation == null) { // 해당 강의평이 존재하지 않는다면
             throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
         }
 
-        if (user.getNickname().equals(evaluation.getNickname()) && !Objects.equals(evaluation.getNickname(), "ww")) { // 해당 강의평을 작성한 사용자가 아니고 admin도 아니라면
-            throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
-        }
-
         evaluationRepository.delete(evaluation);
     }
+
 
     // 모든 강의평 불러오기
     public RspsTemplate<List<Evaluation>> getPosts() {

@@ -1,6 +1,5 @@
 package com.app.skhuaz.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,9 +9,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -37,10 +34,6 @@ public class Route {
     @OneToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private List<PreLecture> preLectures;
-
-    public void setPreLectures(List<PreLecture> preLectures) {
-        this.preLectures = preLectures;
-    }
 
     @Builder
     public Route(String title, String recommendation, LocalDateTime createAt, String email, List<PreLecture> preLectures){

@@ -44,17 +44,13 @@ public class PreLectureService {
         return new RspsTemplate<>(HttpStatus.OK, "선수과목 저장에 성공하였습니다.", preLectures);
     }
 
+//    public RspsTemplate<List<PreLecture>> getPreLecturesByUser(String userEmail) {
+//        // 사용자의 이메일을 기반으로 해당 사용자가 저장한 선수 과목 정보를 조회
+//        List<PreLecture> userPreLectures = preLectureRepository.findByEmail(userEmail);
+//        return new RspsTemplate<>(HttpStatus.OK, "선수과목 저장에 성공하였습니다.", userPreLectures);
+//    }
 
-    public RspsTemplate<List<PreLecture>> getPreLecturesByUser(String userEmail) {
-        // 사용자의 이메일을 기반으로 해당 사용자가 저장한 선수 과목 정보를 조회
-        List<PreLecture> userPreLectures = preLectureRepository.findByEmail(userEmail);
-        return new RspsTemplate<>(HttpStatus.OK, "선수과목 저장에 성공하였습니다.", userPreLectures);
-    }
-
-    @Transactional
     public List<PreLecture> getPreLecturesByEmail(String email) {
-        List<PreLecture> preLectureList = preLectureRepository.findByEmail(email);
-        // return new RspsTemplate<>(HttpStatus.OK, "사용자 선수과목 목록 조회에 성공하였습니다.", preLectureList);
-        return preLectureList;
+        return preLectureRepository.findByEmail(email);
     }
 }

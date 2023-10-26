@@ -19,7 +19,7 @@ User 엔티티
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     @NotNull(message = "이메일은 필수 입력값입니다.") // 수정된 부분

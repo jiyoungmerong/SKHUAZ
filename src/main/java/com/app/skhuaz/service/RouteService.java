@@ -3,10 +3,12 @@ package com.app.skhuaz.service;
 import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.domain.PreLecture;
 import com.app.skhuaz.domain.Route;
+import com.app.skhuaz.domain.User;
 import com.app.skhuaz.exception.ErrorCode;
 import com.app.skhuaz.exception.exceptions.BusinessException;
 import com.app.skhuaz.repository.PreLectureRepository;
 import com.app.skhuaz.repository.RouteRepository;
+import com.app.skhuaz.repository.UserRepository;
 import com.app.skhuaz.request.RouteSaveRequest;
 import com.app.skhuaz.response.AllRoutesResponse;
 import com.app.skhuaz.response.RouteDetailResponse;
@@ -30,6 +32,8 @@ public class RouteService {
 
     private final RouteRepository routeRepository;
 
+    private final UserRepository userRepository;
+
     @Transactional
     public RspsTemplate<List<PreLecture>> createRoute(RouteSaveRequest request, String email) { // 루트 저장
 
@@ -38,7 +42,7 @@ public class RouteService {
         List<PreLecture> preLectures = new ArrayList<>();
         for (Long preLectureId : preLectureIds) {
             Optional<PreLecture> preLectureOptional = preLectureRepository.findById(preLectureId);
-            preLectureOptional.ifPresent(preLecture -> preLectures.add(preLecture));
+            preLectureOptional.ifPresent(preLectures::add);
         }
 
         Route route = Route.builder()
@@ -93,13 +97,17 @@ public class RouteService {
     }
 
     @Transactional
-    public void deleteRouteById(Long routeId) {
+    public void deleteRouteById(Long routeId, String email) {
         Optional<Route> optionalRoute = routeRepository.findById(routeId);
-        if (optionalRoute.isPresent()) {
-            Route route = optionalRoute.get();
-            routeRepository.delete(route);
-        } else {
-            throw new BusinessException(ErrorCode.NOT_EXISTS_ROUTE);
-        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
+
+        optionalRoute.ifPresent(route -> {
+            if (Objects.equals(user.getEmail(), route.getEmail())) {
+                routeRepository.delete(route);
+            } else {
+                throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
+            }
+        });
     }
 }

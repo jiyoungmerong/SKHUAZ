@@ -11,6 +11,7 @@ import com.app.skhuaz.service.SoftwareSubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -43,7 +44,6 @@ public class SoftwareSubjectController {
     @PostMapping("/updateCheckYn")
     public RspsTemplate<String> updateCheckYn(@RequestBody SavePreLecRequest request) {
         List<Long> subjectIds = request.getSubjectIds();
-        // subjectIds를 이용한 로직 수행
 
         return softwareSubjectService.updateCheckYn(subjectIds);
 

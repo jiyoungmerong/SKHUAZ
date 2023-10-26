@@ -35,9 +35,14 @@ public class Evaluation {
     private LocalDateTime createdAt; // 생성 날짜
 
     private String nickname;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "lectureId")
+
+    @ManyToOne(cascade = CascadeType.PERSIST) // 또는 CascadeType.MERGE, CascadeType.REFRESH 등을 사용할 수 있음
+    @JoinColumn(name = "lecture_id")
     private Lecture lecture;
+
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "lectureId")
+//    private Lecture lecture;
 
     @Builder
     public Evaluation(int teamPlay, int task, int practice, int presentation, String title,

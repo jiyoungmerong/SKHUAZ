@@ -34,9 +34,9 @@ public class RouteController {
         return new RspsTemplate<>(HttpStatus.OK, "모든 루트평을 성공적으로 불러왔습니다.", routesWithPreLectures);
     }
 
-    @DeleteMapping("/route/delete/{routeId}") // 삭제할 루트평의 ID를 경로 변수로 받습니다.
-    public RspsTemplate<Void> deleteRoute(@PathVariable Long routeId) {
-        routeService.deleteRouteById(routeId);
+    @DeleteMapping("/route/delete/{routeId}")
+    public RspsTemplate<Void> deleteRoute(@PathVariable Long routeId, Principal principal) {
+        routeService.deleteRouteById(routeId, principal.getName());
         return new RspsTemplate<>(HttpStatus.OK, "루트평을 성공적으로 삭제하였습니다.");
     }
 }
