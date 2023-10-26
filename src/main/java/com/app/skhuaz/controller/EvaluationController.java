@@ -49,18 +49,9 @@ public class EvaluationController {
         return new RspsTemplate<>(HttpStatus.OK, evaluationId + "번 강의평이 성공적으로 삭제되었습니다.");
     }
 
-    // 내가 작성한 강의평 불러오기 => 모바일쪽에서 필터처리 기능 추가한다고 함
-//    @GetMapping("/my-evaluations")
-//    public ResponseEntity<List<Evaluation>> getMyEvaluations(Principal principal) {
-//
-//        List<Evaluation> myEvaluations = evaluationRepository.findAllByEmail(principal.getName());
-//        // 해당 강의평 존재하지 않을 때 처리
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(myEvaluations);
-//    }
+    @GetMapping("/my-evaluations") // 내가 작성한 강의평 불러오기
+    public RspsTemplate<List<Evaluation>> getMyEvaluations(Principal principal) {
+        return evaluationService.getEvaluationsByEmail(principal.getName());
+    }
 
-
-    // 전공별로 불러오기 => 모바일쪽에서 필터처리 기능 추가한다고 함
-
-    // 강의 이름으로 검색 => 모바일쪽에서 필터처리 기능 추가한다고 함
 }

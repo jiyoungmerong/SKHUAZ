@@ -10,4 +10,7 @@ public interface EvaluationRepository extends JpaRepository<Evaluation, Long> {
 
     List<Evaluation> findAllByOrderByEvaluationIdDesc();
     Evaluation findByEvaluationId(Long evaluationId);
+
+    List<Evaluation> findByNickname(String nickname);
+
 }

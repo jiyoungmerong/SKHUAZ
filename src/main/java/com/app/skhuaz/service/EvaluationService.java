@@ -18,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -118,6 +120,19 @@ public class EvaluationService {
         return new RspsTemplate<>(HttpStatus.OK, "모든 강의평 불러오기에 성공했습니다.", evaluations);
     }
 
+    public RspsTemplate<List<Evaluation>> getEvaluationsByEmail(String email) { // 내가 작성한 강의평 불러오기
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String userNickname = user.getNickname();
+
+            List<Evaluation> evaluations = evaluationRepository.findByNickname(userNickname);
+            return new RspsTemplate<>(HttpStatus.OK, "내가 작성한 강의평 불러오기에 성공했습니다.", evaluations);
+        } else {
+            return new RspsTemplate<>(HttpStatus.NOT_FOUND, "해당 이메일에 해당하는 사용자를 찾을 수 없습니다.", null);
+        }
+    }
 
 
     public RspsTemplate<Evaluation> getEvaluationById(@PathVariable Long evaluationId) { // 강의평 상세보기
