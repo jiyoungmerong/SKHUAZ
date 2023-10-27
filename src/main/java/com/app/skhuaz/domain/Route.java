@@ -1,5 +1,6 @@
 package com.app.skhuaz.domain;
 
+import com.app.skhuaz.request.RouteEditRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,12 @@ public class Route {
         this.recommendation = recommendation;
         this.createAt = createAt;
         this.email = email;
-         this.preLectures = preLectures;
+        this.preLectures = preLectures;
+    }
+
+    public void update(RouteEditRequest request){
+        this.title = request.getTitle();
+        this.recommendation= request.getRecommendation();
+
     }
 }

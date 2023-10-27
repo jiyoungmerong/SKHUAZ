@@ -9,6 +9,7 @@ import com.app.skhuaz.exception.exceptions.BusinessException;
 import com.app.skhuaz.repository.PreLectureRepository;
 import com.app.skhuaz.repository.RouteRepository;
 import com.app.skhuaz.repository.UserRepository;
+import com.app.skhuaz.request.RouteEditRequest;
 import com.app.skhuaz.request.RouteSaveRequest;
 import com.app.skhuaz.response.AllRoutesResponse;
 import com.app.skhuaz.response.RouteDetailResponse;
@@ -130,12 +131,33 @@ public class RouteService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
 
+        optionalRoute.orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXISTS_ROUTE));
         optionalRoute.ifPresent(route -> {
-            if (Objects.equals(user.getEmail(), route.getEmail())) {
-                routeRepository.delete(route);
-            } else {
+            if (!Objects.equals(user.getEmail(), route.getEmail())) {
                 throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
             }
+            routeRepository.delete(route);
         });
+    }
+
+    @Transactional
+    public RspsTemplate<Route> updateRoute(Long routeId, RouteEditRequest request, String userEmail) {
+        Optional<Route> routeOptional = routeRepository.findById(routeId); // 루트평 찾아오
+
+        if (routeOptional.isPresent()) {
+            Route route = routeOptional.get();
+
+            // 현재 로그인한 사용자와 루트의 소유자가 같은지 확인
+            if (!route.getEmail().equals(userEmail)) {
+                throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
+            }
+
+            route.update(request);
+
+            Route updatedRoute = routeRepository.save(route);
+            return new RspsTemplate<>(HttpStatus.OK, "루트 수정 성공!", updatedRoute);
+        } else {
+            throw new BusinessException(ErrorCode.NOT_EXISTS_ROUTE);
+        }
     }
 }
