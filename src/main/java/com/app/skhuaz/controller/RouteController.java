@@ -21,6 +21,7 @@ import java.util.List;
 public class RouteController {
     private final RouteService routeService;
 
+
     @PostMapping("/route/create") // 루트평 저장
     public RspsTemplate<List<PreLecture>> createRoute(@RequestBody RouteSaveRequest request, Principal principal) {
         return routeService.createRoute(request, principal.getName());

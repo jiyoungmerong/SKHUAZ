@@ -29,8 +29,6 @@ public class RouteService {
 
     private final PreLectureRepository preLectureRepository;
 
-    private final PreLectureService preLectureService;
-
     private final RouteRepository routeRepository;
 
     private final UserRepository userRepository;
@@ -59,6 +57,7 @@ public class RouteService {
         return new RspsTemplate<>(HttpStatus.OK, "루트 저장 성공!!", preLectures);
     }
 
+
     public RspsTemplate<RouteDetailResponse> getRouteDetails(Long routeId) { // 상세보기
         Route route = routeRepository.findById(routeId).orElse(null);
 
@@ -76,7 +75,7 @@ public class RouteService {
         List<AllRoutesResponse> routeResponses = new ArrayList<>();
 
         for (Route route : routes) {
-            List<PreLecture> preLectures = preLectureService.getPreLecturesByEmail(route.getEmail());
+            List<PreLecture> preLectures = route.getPreLectures(); // Route에서 PreLecture 가져오기
             Hibernate.initialize(preLectures); // lecNames 필드 초기화
 
             AllRoutesResponse routeResponse = AllRoutesResponse.of(
@@ -103,7 +102,7 @@ public class RouteService {
         List<AllRoutesResponse> routeResponses = new ArrayList<>();
 
         for (Route route : routes) {
-            List<PreLecture> preLectures = preLectureService.getPreLecturesByEmail(route.getEmail());
+            List<PreLecture> preLectures = route.getPreLectures(); // Route에서 PreLecture 가져오기
             Hibernate.initialize(preLectures); // lecNames 필드 초기화
 
             AllRoutesResponse routeResponse = AllRoutesResponse.of(
@@ -125,6 +124,7 @@ public class RouteService {
     }
 
 
+
     @Transactional
     public void deleteRouteById(Long routeId, String email) { // 루트평 삭제
         Optional<Route> optionalRoute = routeRepository.findById(routeId);
@@ -140,9 +140,10 @@ public class RouteService {
         });
     }
 
+
     @Transactional
     public RspsTemplate<Route> updateRoute(Long routeId, RouteEditRequest request, String userEmail) {
-        Optional<Route> routeOptional = routeRepository.findById(routeId); // 루트평 찾아오
+        Optional<Route> routeOptional = routeRepository.findById(routeId); // 루트평 찾아오기
 
         if (routeOptional.isPresent()) {
             Route route = routeOptional.get();
