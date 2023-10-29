@@ -31,6 +31,10 @@ public class SoftwareSubject { // 소프의 모든 강의 테이블
         this.checkYn = checkYn;
     }
 
+    public void updateSemester(String semester){
+        this.semester = semester;
+    }
+
     @Builder
     public SoftwareSubject(String subjectName, String semester, boolean checkYn, boolean clickYn){
         this.subjectName = subjectName;
