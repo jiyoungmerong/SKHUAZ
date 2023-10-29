@@ -27,12 +27,9 @@ public class PreLecture {
 
     private String email;
 
-    public void addUser(String email){
-        this.email = email;
-    }
-
     @Builder
-    public PreLecture(String semester, String email, List<String> lecNames){
+    public PreLecture(Long preLectureId, String semester, String email, List<String> lecNames){
+        this.preLectureId = preLectureId;
         this.semester = semester;
         this.email = email;
         this.lecNames = lecNames;
