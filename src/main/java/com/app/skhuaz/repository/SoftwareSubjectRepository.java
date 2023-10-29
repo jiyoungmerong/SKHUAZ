@@ -14,7 +14,6 @@ public interface SoftwareSubjectRepository extends JpaRepository<SoftwareSubject
     @Query("SELECT s FROM SoftwareSubject s WHERE s.checkYn = true")
     List<SoftwareSubject> findByCheckYnTrue();
 
-
-
+    SoftwareSubject findBySubjectName(String subjectName);
 
 }

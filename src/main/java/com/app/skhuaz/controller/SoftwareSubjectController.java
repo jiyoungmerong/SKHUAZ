@@ -2,7 +2,7 @@ package com.app.skhuaz.controller;
 
 import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.domain.SoftwareSubject;
-import com.app.skhuaz.request.AddPreLectureRequest;
+import com.app.skhuaz.request.PreLectureEditRequest;
 import com.app.skhuaz.request.LectureFilterRequest;
 import com.app.skhuaz.request.SavePreLecRequest;
 import com.app.skhuaz.response.AddPreLectureResponse;
@@ -26,9 +26,19 @@ public class SoftwareSubjectController {
         return softwareSubjectService.getSubjectsBySemester(request.getSemester());
     }
 
-    @PostMapping("/add-preLecture") // 해당 학기에 수강 가능한 강의 목록 조회
-    public RspsTemplate<AddPreLectureResponse> addPrerequisiteLecture(@RequestBody AddPreLectureRequest request) {
+    @PostMapping("/add-preLecture") // admin 선수과목 추가
+    public RspsTemplate<AddPreLectureResponse> addPrerequisiteLecture(@RequestBody PreLectureEditRequest request) {
         return softwareSubjectService.addPrerequisiteLecture(request);
+    }
+
+    @DeleteMapping("/delete/lecture/{preId}") // admin 선수과목 삭제
+    public RspsTemplate<String> deletePrerequisiteLecture(@PathVariable Long preId) {
+        return softwareSubjectService.deletePrerequisiteLecture(preId);
+    }
+
+    @PutMapping("/update/lecture/{preId}") // admin 선수과목 수정
+    public RspsTemplate<AddPreLectureResponse> updatePrerequisiteLecture(@PathVariable Long preId,  @RequestBody PreLectureEditRequest request) {
+        return softwareSubjectService.editPrerequisiteLecture(preId, request);
     }
 
     @GetMapping("/check/{subjectId}") // 선수과목 선택 가능 여부 판단

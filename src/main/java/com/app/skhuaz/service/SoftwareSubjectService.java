@@ -7,7 +7,7 @@ import com.app.skhuaz.exception.ErrorCode;
 import com.app.skhuaz.exception.exceptions.BusinessException;
 import com.app.skhuaz.repository.PrerequisitesRepository;
 import com.app.skhuaz.repository.SoftwareSubjectRepository;
-import com.app.skhuaz.request.AddPreLectureRequest;
+import com.app.skhuaz.request.PreLectureEditRequest;
 import com.app.skhuaz.response.AddPreLectureResponse;
 import com.app.skhuaz.response.PrerequisitesResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class SoftwareSubjectService {
 
     private final PrerequisitesRepository prerequisitesRepository;
 
-    public RspsTemplate<List<SoftwareSubject>> getSubjectsBySemester(String semester) { // 학기 강의 목록 조
+    public RspsTemplate<List<SoftwareSubject>> getSubjectsBySemester(String semester) { // 학기 강의 목록 조회
         List<SoftwareSubject> subjects = softwareSubjectRepository.findBySemesterLessThanEqualAndCheckYnIsFalseOrderBySemesterDesc(semester);
         if(subjects.isEmpty()){
             throw new BusinessException(ErrorCode.NOT_EXISTS_LECNAME);
@@ -70,8 +70,7 @@ public class SoftwareSubjectService {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RspsTemplate<>(HttpStatus.NOT_FOUND, "해당 강의가 존재하지 않습니다.", null));
     }
 
-
-    public RspsTemplate<List<PrerequisitesResponse>> getAllPrerequisitesWithDetails() { // admin 선수과목 리스트 조회
+    public RspsTemplate<List<PrerequisitesResponse>> getAllPrerequisitesWithDetails() {
         Set<String> uniqueSubjectNames = new HashSet<>();
         List<PrerequisitesResponse> prerequisiteDetails = new ArrayList<>();
 
@@ -84,14 +83,14 @@ public class SoftwareSubjectService {
             if (subject != null) {
                 String subjectName = subject.getSubjectName();
                 if (uniqueSubjectNames.add(subjectName)) {
-                    prerequisiteDetails.add(PrerequisitesResponse.of(subjectName, subject.getSemester()));
+                    prerequisiteDetails.add(PrerequisitesResponse.of(prerequisite.getPreId(), subjectName, subject.getSemester()));
                 }
             }
 
             if (prerequisiteSubject != null) {
                 String preName = prerequisiteSubject.getSubjectName();
                 if (uniqueSubjectNames.add(preName)) {
-                    prerequisiteDetails.add(PrerequisitesResponse.from(preName, prerequisiteSubject.getSemester()));
+                    prerequisiteDetails.add(PrerequisitesResponse.of(prerequisite.getPreId(), preName, prerequisiteSubject.getSemester()));
                 }
             }
         }
@@ -102,7 +101,7 @@ public class SoftwareSubjectService {
     }
 
     @Transactional
-    public RspsTemplate<AddPreLectureResponse> addPrerequisiteLecture(AddPreLectureRequest request) { // admin 선수과목 추가
+    public RspsTemplate<AddPreLectureResponse> addPrerequisiteLecture(PreLectureEditRequest request) { // admin 선수과목 추가
         SoftwareSubject subject = softwareSubjectRepository.findBySubjectNameAndSemester(request.getSubjectName(), request.getSemester());
         SoftwareSubject prerequisiteSubject = softwareSubjectRepository.findBySubjectNameAndSemester(request.getPreLecName(), request.getPreLecSemester());
 
@@ -136,6 +135,74 @@ public class SoftwareSubjectService {
         return new RspsTemplate<>(HttpStatus.OK, "admin용 선수과목 추가 성공!!", AddPreLectureResponse.of(request.getSubjectName(), request.getPreLecName()));
 
     }
+
+    @Transactional
+    public RspsTemplate<String> deletePrerequisiteLecture(Long preId) {
+        Prerequisites prerequisites = prerequisitesRepository.findById(preId).orElse(null);
+        if (prerequisites != null) {
+            prerequisitesRepository.delete(prerequisites);
+            return new RspsTemplate<>(HttpStatus.OK, "admin용 선수과목 삭제 성공!!");
+        } else {
+            return new RspsTemplate<>(HttpStatus.NOT_FOUND, "해당 선수과목이 존재하지 않습니다.");
+        }
+    }
+
+    @Transactional
+    public RspsTemplate<AddPreLectureResponse> editPrerequisiteLecture(Long preId, PreLectureEditRequest request) {
+        try {
+            Prerequisites prerequisites = prerequisitesRepository.findById(preId).orElse(null);
+
+            if (prerequisites != null) {
+                SoftwareSubject subject = softwareSubjectRepository.findBySubjectName(request.getSubjectName());
+                SoftwareSubject prerequisiteSubject = softwareSubjectRepository.findBySubjectName(request.getPreLecName());
+
+                // 과목이 이미 존재하는 경우 학기 업데이트 또는 새로운 과목 생성
+                if (subject != null) {
+                    subject.updateSemester(request.getSemester());
+                } else {
+                    // 과목이 존재하지 않으면 새로 생성
+                    subject = SoftwareSubject.builder()
+                            .subjectName(request.getSubjectName())
+                            .semester(request.getSemester())
+                            .checkYn(false)
+                            .clickYn(false)
+                            .build();
+                }
+
+                // 선수과목이 이미 존재하는 경우 학기 업데이트 또는 새로운 선수과목 생성
+                if (prerequisiteSubject != null) {
+                    prerequisiteSubject.updateSemester(request.getPreLecSemester());
+                } else {
+                    // 선수과목이 존재하지 않으면 새로 생성
+                    prerequisiteSubject = SoftwareSubject.builder()
+                            .subjectName(request.getPreLecName())
+                            .semester(request.getPreLecSemester())
+                            .checkYn(false)
+                            .clickYn(false)
+                            .build();
+                }
+
+                // 학기 업데이트 또는 새로운 과목 저장
+                softwareSubjectRepository.save(subject);
+                // 학기 업데이트 또는 새로운 선수과목 저장
+                softwareSubjectRepository.save(prerequisiteSubject);
+
+                // Prerequisites 엔터티 업데이트
+                prerequisites.updateContent(subject.getSubjectId(), prerequisiteSubject.getSubjectId());
+                prerequisitesRepository.save(prerequisites);
+
+                return new RspsTemplate<>(HttpStatus.OK, "admin용 선수과목 수정 성공!!",
+                        AddPreLectureResponse.of(subject.getSubjectName(), prerequisiteSubject.getSubjectName()));
+            } else {
+                return new RspsTemplate<>(HttpStatus.NOT_FOUND, "해당 선수과목이 존재하지 않습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.TRY_ADD_PRELECTURE);
+
+        }
+    }
+
 
     @Transactional
     public RspsTemplate<String> updateCheckYn(List<Long> subjectIds) { // checkYn 업데이트
