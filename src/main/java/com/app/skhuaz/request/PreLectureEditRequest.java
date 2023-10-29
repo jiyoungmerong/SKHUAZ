@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class AddPreLectureRequest {
+public class PreLectureEditRequest {
     private String subjectName; // 과목명
 
     private String semester; // 해당 과목의 학기
