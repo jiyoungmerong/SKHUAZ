@@ -23,18 +23,8 @@ public class Prerequisites {
 
     private Long prerequisiteId;
 
-//    @Builder
-//    public void Prerequisites(Long subjectId, Long prerequisiteId){
-//        this.subjectId = subjectId;
-//        this.prerequisiteId = prerequisiteId;
-//    }
-
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name="subject_id", nullable=false)
-//    private SoftwareSubject subject;
-//
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name="prerequisite_id", nullable=false)
-//    private SoftwareSubject prerequisite;
-
+    public void updateContent(Long subjectId, Long prerequisiteId){
+        this.subjectId = subjectId;
+        this.prerequisiteId = prerequisiteId;
+    }
 }
