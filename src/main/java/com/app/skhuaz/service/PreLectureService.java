@@ -2,7 +2,6 @@ package com.app.skhuaz.service;
 
 import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.domain.PreLecture;
-import com.app.skhuaz.domain.Route;
 import com.app.skhuaz.domain.SoftwareSubject;
 import com.app.skhuaz.repository.PreLectureRepository;
 import com.app.skhuaz.repository.RouteRepository;
@@ -22,6 +21,8 @@ public class PreLectureService {
     private final PreLectureRepository preLectureRepository;
 
     private final SoftwareSubjectRepository softwareSubjectRepository;
+
+    private final SoftwareSubjectService softwareSubjectService;
 
     private final RouteRepository routeRepository;
 
@@ -55,6 +56,8 @@ public class PreLectureService {
         preLectures.sort(Comparator.comparing(PreLecture::getSemester));
 
         preLectureRepository.saveAll(preLectures);
+
+        softwareSubjectService.disableAllCheckYn();
 
         return new RspsTemplate<>(HttpStatus.OK, "선수과목 저장에 성공하였습니다.", preLectures);
     }
