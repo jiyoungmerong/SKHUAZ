@@ -134,13 +134,17 @@ public class UserService {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         String nickname = userOptional.get().getNickname();
-        if(userOptional.get().isDepartment()){ // 1학년일 때
-            userOptional.get().updateMajor1(); // major1을 IT융합자율학부로 설정
-        }
+        String major1 = userOptional.get().getMajor1();
+        String major2 = userOptional.get().getMajor2();
+        String semester = userOptional.get().getSemester();
+        boolean graduate = userOptional.get().isGraduate();
+        boolean department = userOptional.get().isDepartment();
+        boolean major_minor = userOptional.get().isMajor_minor();
+        boolean double_major = userOptional.get().isDouble_major();
+
 
         return new RspsTemplate<>(HttpStatus.OK, "유저 정보 조회 성공!!",
-                UserMainInformationResponse.of(nickname, userOptional.get().getMajor1(), userOptional.get().getMajor2()));
-
+                UserMainInformationResponse.of(nickname, major1, major2, semester, graduate, department, major_minor, double_major));
 
     }
 }
