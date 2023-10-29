@@ -44,7 +44,9 @@ public enum ErrorCode {
     NOT_EXISTS_LECNAME(404, "해당 학기와 교수님의 강의가 존재하지 않습니다."),
 
     // 루트
-    NOT_EXISTS_ROUTE(404, "해당 루트글이 존재하지 않습니다.");
+    NOT_EXISTS_ROUTE(404, "해당 루트글이 존재하지 않습니다."),
+
+    TRY_ADD_PRELECTURE(404, "선수과목 수정 대신 추가를 진행해주세요.");
 
     private int statusCode;
     private String message;
