@@ -4,7 +4,6 @@ import com.app.skhuaz.common.RspsTemplate;
 import com.app.skhuaz.domain.PreLecture;
 import com.app.skhuaz.service.PreLectureService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
@@ -19,10 +18,9 @@ public class PreLectureController {
         return preLectureService.addLectures(principal.getName());
     }
 
-
-    @GetMapping("/preLecture/check") // 로그인한 유저 선수과목 불러오기
+    @GetMapping("/preLecture/check") // 사용자 선수과목 불러오기 => 루트평에서 사용
     public RspsTemplate<List<PreLecture>> getPreLectures(Principal principal) {
-         return new RspsTemplate<>(HttpStatus.OK, "사용자 선수과목 목록 조회에 성공하였습니다.", preLectureService.getPreLecturesByEmail(principal.getName()));
+        return preLectureService.getUserPreLecture(principal.getName());
     }
 
 }

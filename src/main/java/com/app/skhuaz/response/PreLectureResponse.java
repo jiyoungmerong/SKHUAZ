@@ -1,25 +1,36 @@
 package com.app.skhuaz.response;
 
 import com.app.skhuaz.domain.PreLecture;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 public class PreLectureResponse {
+//    private Map<String, List<PreLectureInfoResponse>> semesters;
+//
+//    public PreLectureResponse(Map<String, List<PreLectureInfoResponse>> semesters) {
+//        this.semesters = semesters;
+//    }
+
     private Long preLectureId;
     private String semester;
     private List<String> lecNames;
 
-    public static PreLectureResponse of(PreLecture preLecture) {
-        return new PreLectureResponse(
-                preLecture.getPreLectureId(),
-                preLecture.getSemester(),
-                preLecture.getLecNames()
-        );
+//    private List<Map<String, Object>> preLectures;
+//
+//    public PreLectureResponse(List<Map<String, Object>> preLectures) {
+//        this.preLectures = preLectures;
+//    }
+
+    @Builder
+    public PreLectureResponse(Long preLectureId, String semester, List<String> lecNames) {
+        this.preLectureId = preLectureId;
+        this.semester = semester;
+        this.lecNames = lecNames;
     }
+
+
 }
