@@ -36,6 +36,9 @@ public class RouteService {
     @Transactional
     public RspsTemplate<List<PreLecture>> createRoute(RouteSaveRequest request, String email) { // 루트 저장
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
+
         List<Long> preLectureIds = request.getPreLectureList();
 
         List<PreLecture> preLectures = new ArrayList<>();
@@ -49,6 +52,7 @@ public class RouteService {
                 .recommendation(request.getRecommendation())
                 .createAt(LocalDateTime.now())
                 .email(email)
+                .nickname(user.getNickname())
                 .preLectures(preLectures)  // preLectures 설정
                 .build();
 
@@ -70,8 +74,12 @@ public class RouteService {
     }
 
     @Transactional
-    public List<AllRoutesResponse> getAllRoutesWithPreLecturesInReverseOrder() { // 모든 루트 불러오기
+    public List<AllRoutesResponse> getAllRoutesWithPreLecturesInReverseOrder(String email) { // 모든 루트 불러오기
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
+
         List<Route> routes = routeRepository.findAll();
+
         List<AllRoutesResponse> routeResponses = new ArrayList<>();
 
         for (Route route : routes) {
@@ -84,6 +92,7 @@ public class RouteService {
                     route.getRecommendation(),
                     route.getCreateAt(),
                     route.getEmail(),
+                    route.getNickname(),
                     preLectures
             );
 
@@ -111,6 +120,7 @@ public class RouteService {
                     route.getRecommendation(),
                     route.getCreateAt(),
                     route.getEmail(),
+                    route.getNickname(),
                     preLectures
             );
 

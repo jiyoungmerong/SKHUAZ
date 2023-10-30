@@ -32,16 +32,19 @@ public class Route {
 
     private String email;
 
+    private String nickname;
+
     @OneToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private List<PreLecture> preLectures;
 
     @Builder
-    public Route(String title, String recommendation, LocalDateTime createAt, String email, List<PreLecture> preLectures){
+    public Route(String title, String recommendation, LocalDateTime createAt, String email, String nickname, List<PreLecture> preLectures){
         this.title = title;
         this.recommendation = recommendation;
         this.createAt = createAt;
         this.email = email;
+        this.nickname = nickname;
         this.preLectures = preLectures;
     }
 

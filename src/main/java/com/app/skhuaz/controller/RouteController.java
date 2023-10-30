@@ -33,8 +33,8 @@ public class RouteController {
     }
 
     @GetMapping("/route/AllRoute")
-    public RspsTemplate<List<AllRoutesResponse>> getAllRoutesWithPreLectures() {
-        List<AllRoutesResponse> routesWithPreLectures = routeService.getAllRoutesWithPreLecturesInReverseOrder();
+    public RspsTemplate<List<AllRoutesResponse>> getAllRoutesWithPreLectures(Principal principal) {
+        List<AllRoutesResponse> routesWithPreLectures = routeService.getAllRoutesWithPreLecturesInReverseOrder(principal.getName());
         return new RspsTemplate<>(HttpStatus.OK, "모든 루트평을 성공적으로 불러왔습니다.", routesWithPreLectures);
     }
 
