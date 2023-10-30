@@ -103,10 +103,17 @@ public class EvaluationService {
 
     @Transactional
     public void deleteEvaluation(Long evaluationId, String email) { // 강의평 삭제
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
+
         Evaluation evaluation = evaluationRepository.findByEvaluationId(evaluationId);
 
         if (evaluation == null) { // 해당 강의평이 존재하지 않는다면
             throw new BusinessException(ErrorCode.NOT_EXISTS_EVALUATION);
+        }
+
+        if (!Objects.equals(user.getNickname(), evaluation.getNickname()) && !Objects.equals(user.getEmail(), "admin")) {
+            throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
         }
 
         evaluationRepository.delete(evaluation);

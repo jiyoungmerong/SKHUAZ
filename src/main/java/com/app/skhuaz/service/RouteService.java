@@ -133,7 +133,7 @@ public class RouteService {
 
         optionalRoute.orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXISTS_ROUTE));
         optionalRoute.ifPresent(route -> {
-            if (!Objects.equals(user.getEmail(), route.getEmail())) {
+            if (!Objects.equals(user.getEmail(), route.getEmail()) && !Objects.equals(user.getEmail(), "admin")) {
                 throw new BusinessException(ErrorCode.NOT_EXISTS_AUTHORITY);
             }
             routeRepository.delete(route);
