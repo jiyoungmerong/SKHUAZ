@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -92,9 +93,11 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_JOIN));
 
-        boolean checkNickname = userRepository.findByNickname(request.getNickname()).isPresent();
-        if (checkNickname) { // 닉네임 중복일 때
-            throw new BusinessException(ErrorCode.NICKNAME_ALREADY_REGISTERED);
+        if(!Objects.equals(user.getNickname(), request.getNickname())){
+            boolean checkNickname = userRepository.findByNickname(request.getNickname()).isPresent();
+            if (checkNickname) { // 닉네임 중복일 때
+                throw new BusinessException(ErrorCode.NICKNAME_ALREADY_REGISTERED);
+            }
         }
 
         user.updateUser(request);

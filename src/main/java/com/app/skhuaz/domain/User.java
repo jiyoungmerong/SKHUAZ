@@ -87,8 +87,4 @@ public class User {
         this.major_minor = request.isMajor_minor();
         this.double_major = request.isDouble_major();
     }
-
-    public void updateMajor1(){
-        this.major1 = "IT융합자율학부";
-    }
 }
